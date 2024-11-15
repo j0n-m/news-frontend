@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const FeedItemSchema = z.object({
-  content: z.string(),
-  image_url: z.string(),
+  content: z.string().optional(),
+  image_url: z.string().optional(),
   title: z.string(),
   content_snippet: z.string(),
   pubDate: z.coerce.date(),
@@ -19,8 +19,8 @@ export const FeedSchema = z.object({
 });
 
 export const FeedResponseSchema = z.object({
-  data: z.array(FeedSchema),
-  nextStart: z.number(),
+  data: z.array(FeedSchema).optional(),
+  nextStart: z.any(),
 });
 export const NextStartSchemaBySource = z.object({
   skip: z.number(),
