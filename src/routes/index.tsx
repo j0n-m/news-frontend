@@ -3,7 +3,6 @@ import IndexAuth from "../pages/Home/IndexAuth";
 import Index from "../pages/Home/Index";
 import { queryOptions } from "@tanstack/react-query";
 import fetch from "../utils/fetch";
-import { queryClient } from "../App";
 
 export type SearchDeps = {
   nextIndex?: number;
@@ -36,9 +35,6 @@ export const Route = createFileRoute("/")({
   },
   beforeLoad: async () => {
     //check auth
-  },
-  loader: async ({ deps }) => {
-    // await queryClient.ensureQueryData(getHomeFeed(deps));
   },
 });
 

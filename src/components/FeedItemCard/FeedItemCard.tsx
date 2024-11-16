@@ -3,8 +3,16 @@ import moment from "moment";
 
 type FeedItemCardProps = {
   feedItem: FeedItem;
+  feedId: string;
+  // handleCardClick: ({
+  //   feedItem,
+  //   feedId,
+  // }: {
+  //   feedItem: FeedItem;
+  //   feedId: string;
+  // }) => void;
 };
-function FeedItemCard({ feedItem }: FeedItemCardProps) {
+const FeedItemCard = ({ feedItem }: FeedItemCardProps) => {
   const momentDate = moment(feedItem.pubDate);
   const cardDate =
     momentDate.toDate() > new Date()
@@ -12,7 +20,7 @@ function FeedItemCard({ feedItem }: FeedItemCardProps) {
       : moment(momentDate).fromNow();
 
   return (
-    <div className="feed-item-card py-8">
+    <div className="feed-item-card py-4 cursor-pointer">
       <div className="grid grid-cols-[1fr,100px] md:grid-cols-[1fr,100px] gap-2">
         <div className="left-side">
           <h2 className="md:text-lg">{feedItem.title}</h2>
@@ -23,13 +31,13 @@ function FeedItemCard({ feedItem }: FeedItemCardProps) {
             <img
               src={feedItem.image_url}
               role="presentation"
-              className="object-cover rounded-md w-[100px] max-h-[100px]"
+              className="object-cover rounded-md w-[100px] max-h-[80px]"
             />
           )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default FeedItemCard;
