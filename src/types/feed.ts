@@ -7,6 +7,7 @@ export const FeedItemSchema = z.object({
   content_snippet: z.string(),
   pubDate: z.coerce.date(),
   id: z.number(),
+  url_id: z.string(),
   source_link: z.string(),
   author: z.string().optional(),
 });

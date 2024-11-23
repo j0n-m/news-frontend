@@ -1,10 +1,10 @@
 import axios from "axios";
 
+const localDevIP = "http://192.168.86.204:3001";
+// const localDevIP = "http://localhost:3001";
+
 const fetch = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? "http://idk"
-      : "http://localhost:3001/",
+  baseURL: process.env.NODE_ENV === "production" ? "http://idk" : localDevIP,
   withCredentials: true,
 });
 

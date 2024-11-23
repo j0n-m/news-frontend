@@ -12,7 +12,10 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as SignoutIndexImport } from './routes/signout/index'
+import { Route as SigninIndexImport } from './routes/signin/index'
 import { Route as FeedIndexImport } from './routes/feed/index'
+import { Route as CreateFeedsImport } from './routes/create/feeds'
 
 // Create/Update Routes
 
@@ -22,9 +25,27 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const SignoutIndexRoute = SignoutIndexImport.update({
+  id: '/signout/',
+  path: '/signout/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SigninIndexRoute = SigninIndexImport.update({
+  id: '/signin/',
+  path: '/signin/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const FeedIndexRoute = FeedIndexImport.update({
   id: '/feed/',
   path: '/feed/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CreateFeedsRoute = CreateFeedsImport.update({
+  id: '/create/feeds',
+  path: '/create/feeds',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,11 +60,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/create/feeds': {
+      id: '/create/feeds'
+      path: '/create/feeds'
+      fullPath: '/create/feeds'
+      preLoaderRoute: typeof CreateFeedsImport
+      parentRoute: typeof rootRoute
+    }
     '/feed/': {
       id: '/feed/'
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/signin/': {
+      id: '/signin/'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/signout/': {
+      id: '/signout/'
+      path: '/signout'
+      fullPath: '/signout'
+      preLoaderRoute: typeof SignoutIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -53,37 +95,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/create/feeds': typeof CreateFeedsRoute
   '/feed': typeof FeedIndexRoute
+  '/signin': typeof SigninIndexRoute
+  '/signout': typeof SignoutIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/create/feeds': typeof CreateFeedsRoute
   '/feed': typeof FeedIndexRoute
+  '/signin': typeof SigninIndexRoute
+  '/signout': typeof SignoutIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/create/feeds': typeof CreateFeedsRoute
   '/feed/': typeof FeedIndexRoute
+  '/signin/': typeof SigninIndexRoute
+  '/signout/': typeof SignoutIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/feed'
+  fullPaths: '/' | '/create/feeds' | '/feed' | '/signin' | '/signout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/feed'
-  id: '__root__' | '/' | '/feed/'
+  to: '/' | '/create/feeds' | '/feed' | '/signin' | '/signout'
+  id: '__root__' | '/' | '/create/feeds' | '/feed/' | '/signin/' | '/signout/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CreateFeedsRoute: typeof CreateFeedsRoute
   FeedIndexRoute: typeof FeedIndexRoute
+  SigninIndexRoute: typeof SigninIndexRoute
+  SignoutIndexRoute: typeof SignoutIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CreateFeedsRoute: CreateFeedsRoute,
   FeedIndexRoute: FeedIndexRoute,
+  SigninIndexRoute: SigninIndexRoute,
+  SignoutIndexRoute: SignoutIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +154,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/feed/"
+        "/create/feeds",
+        "/feed/",
+        "/signin/",
+        "/signout/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/create/feeds": {
+      "filePath": "create/feeds.tsx"
+    },
     "/feed/": {
       "filePath": "feed/index.tsx"
+    },
+    "/signin/": {
+      "filePath": "signin/index.tsx"
+    },
+    "/signout/": {
+      "filePath": "signout/index.tsx"
     }
   }
 }

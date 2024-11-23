@@ -1,48 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { FeedItem, FeedResponseSchema } from "../../types/feed";
+import { getRouteApi, useNavigate, useRouter } from "@tanstack/react-router";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { FeedItem } from "../../types/feed";
 import { useInView } from "react-intersection-observer";
 import FeedItemCard from "../../components/FeedItemCard/FeedItemCard";
-import { Fragment, useEffect, useState } from "react";
-import fetch from "../../utils/fetch";
-import { ChevronLeftIcon } from "lucide-react";
+import { Fragment, useEffect } from "react";
 import useSelectedFeedItem from "../../hooks/useSelectedFeedItem";
-import { Button } from "react-aria-components";
-import FeedHomeContainer from "../../components/FeedHomeContainer/FeedHomeContainer";
+import { getHomeFeed } from "../../routes";
 
-// function useHomeFeeds(deps: SearchDeps) {
-//   const res = useSuspenseQuery(getHomeFeed(deps));
-//   console.log(res.data.data);
-//   const homeFeedData = FeedResponseSchema.safeParse(res.data.data);
-//   if (!homeFeedData.success) {
-//     console.error("invalid data was fetched.");
-//   }
-//   const homeFeed = homeFeedData.data;
-
-//   return { homeFeed };
-// }
-function IndexAuth() {
-  // const deps = useLoaderDeps({ from: "/" });
-  // const { homeFeed } = useHomeFeeds(deps);
-  // const homeFeed = {};
-  const { setFeedItemData } = useSelectedFeedItem();
-  const [pageData, setPageData] = useState<{
-    feedItem: FeedItem;
-    feedId: string;
-  } | null>(null);
-  const { ref, inView } = useInView();
-  const navigate = useNavigate();
-  const fetchFeeds = async ({ pageParam }: { pageParam: number | null }) => {
-    const res = await fetch("/api/home?startIndex=" + pageParam);
-    console.log(res.data);
-    const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
-    if (feedSchemaRes.success) {
-      return feedSchemaRes.data;
-    } else {
-      console.error("invalid feed format");
-    }
-  };
-
+function useHomeFeeds() {
   const {
     data,
     error,
@@ -51,13 +16,57 @@ function IndexAuth() {
     isFetching,
     isFetchingNextPage,
     status,
-  } = useInfiniteQuery({
-    queryKey: ["home"],
-    queryFn: fetchFeeds,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage?.nextStart,
-    staleTime: 1000 * 60 * 3,
-  });
+  } = useSuspenseInfiniteQuery(getHomeFeed());
+
+  return {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    status,
+    isFetchingNextPage,
+  };
+}
+function IndexAuth() {
+  const { data, error, fetchNextPage, hasNextPage, status } = useHomeFeeds();
+  const { setFeedItemData } = useSelectedFeedItem();
+  const router = useRouter();
+  // const [pageData, setPageData] = useState<{
+  //   feedItem: FeedItem;
+  //   feedId: string;
+  // } | null>(null);
+  const { ref, inView } = useInView();
+  const navigate = useNavigate();
+
+  // const fetchFeeds = async ({ pageParam }: { pageParam: number | null }) => {
+  //   const res = await fetch("/api/home?startIndex=" + pageParam);
+  //   console.log("fetched data", res.data);
+  //   // const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
+  //   // if (feedSchemaRes.success) {
+  //   //   console.log("feedSchemaRes.data", feedSchemaRes.data);
+  //   //   return feedSchemaRes.data;
+  //   // } else {
+  //   //   console.error("invalid feed format");
+  //   // }
+  //   return res.data;
+  // };
+
+  // const {
+  //   data,
+  //   error,
+  //   fetchNextPage,
+  //   hasNextPage,
+  //   isFetching,
+  //   isFetchingNextPage,
+  //   status,
+  // } = useInfiniteQuery({
+  //   queryKey: ["home feed"],
+  //   queryFn: fetchFeeds,
+  //   initialPageParam: 0,
+  //   getNextPageParam: (lastPage, pages) => lastPage?.nextStart,
+  //   staleTime: 1000 * 60 * 3,
+  // });
 
   const handleCardClick = ({
     feedItem,
@@ -81,53 +90,49 @@ function IndexAuth() {
     }
   }, [inView]);
 
-  return status === "pending" ? (
-    <p>Loading...</p>
-  ) : status === "error" ? (
-    <p>Error: {error.message}</p>
+  return status === "error" ? (
+    <p>Error retrieving your feed</p>
   ) : (
-    <FeedHomeContainer>
-      <div className="container py-4 relative">
-        {data?.pages?.map((page, i) => {
-          return (
-            <Fragment key={i}>
-              {page?.data?.map((feed, index) => {
-                return (
-                  <div key={index} className="mb-4 border-b">
-                    <div>
-                      <h1 className="font-bold text-xl">{feed.feed_title}</h1>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      {feed.items.map((feedItem) => (
-                        <button
-                          className="text-start"
-                          key={feedItem.id}
-                          onClick={() =>
-                            handleCardClick({
-                              feedItem,
-                              feedId: feed.feed_title,
-                            })
-                          }
-                        >
-                          <FeedItemCard
-                            // key={feedItem.id}
-                            feedItem={feedItem}
-                            feedId={feed.feed_title}
-                          />
-                        </button>
-                      ))}
-                    </div>
+    <div className="container mx-auto py-4 relative">
+      {data?.pages?.map((page, i) => {
+        return (
+          <Fragment key={i}>
+            {page?.data?.map((feed, index) => {
+              return (
+                <div key={index} className="mb-4 border-b">
+                  <div>
+                    <h1 className="font-bold text-xl">{feed.feed_title}</h1>
                   </div>
-                );
-              })}
-            </Fragment>
-          );
-        })}
-        <div className="absolute bottom-1" ref={ref}>
-          {hasNextPage ? "fetching more..." : ""}
-        </div>
+                  <div className="flex flex-col gap-4">
+                    {feed.items.map((feedItem) => (
+                      <button
+                        className="text-start"
+                        key={feedItem.id}
+                        onClick={() =>
+                          handleCardClick({
+                            feedItem,
+                            feedId: feed.feed_title,
+                          })
+                        }
+                      >
+                        <FeedItemCard
+                          // key={feedItem.id}
+                          feedItem={feedItem}
+                          feedId={feed.feed_title}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </Fragment>
+        );
+      })}
+      <div className="absolute bottom-1" ref={ref}>
+        {hasNextPage ? "fetching more..." : ""}
       </div>
-    </FeedHomeContainer>
+    </div>
   );
 
   // return status === "pending" ? (

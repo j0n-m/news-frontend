@@ -23,6 +23,11 @@ function FeedHomeContainer({ children }: FeedHomeContainer) {
                 Profile
               </Link>
             </div>
+            <div>
+              <Link to="/signout" className="border w-full block py-1 text-lg">
+                Sign out
+              </Link>
+            </div>
           </nav>
         </div>
       </aside>

@@ -7,7 +7,12 @@ function Nav() {
         <li>
           <Link to="/">Home</Link>
         </li>
-        <li>Login</li>
+        <li>
+          <Link to="/signin">Sign In</Link>
+        </li>
+        <li>
+          <Link to="/signout">Sign Out</Link>
+        </li>
       </ul>
     </nav>
   );
