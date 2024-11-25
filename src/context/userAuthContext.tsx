@@ -1,3 +1,4 @@
+import { User } from "@/types/user";
 import { createContext, ReactNode, useState } from "react";
 
 const initialUserContext = {
@@ -6,12 +7,6 @@ const initialUserContext = {
 };
 export const UserAuthContext = createContext<UserContext>(initialUserContext);
 
-type User = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-};
 type UserContext = {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;

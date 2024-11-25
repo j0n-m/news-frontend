@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AuthGate from "@/components/AuthGate";
-import { queryClient } from "@/App";
+import { queryClient } from "@/routes/__root";
 import { queryOptions } from "@tanstack/react-query";
 import fetch from "@/utils/fetch";
 import { AxiosError } from "axios";
+import AddFeedPage from "@/pages/Add-Feed/AddFeedPage";
+import ErrorPage from "@/components/ErrorPage/Error";
 
 export function verifyAuth() {
   return queryOptions({
@@ -25,14 +27,16 @@ export const Route = createFileRoute("/create/feeds")({
       throw error;
     }
   },
-  errorComponent: () => <div>custom error component</div>,
+  errorComponent: ({ error, reset }) => {
+    return <ErrorPage error={error} reset={reset}></ErrorPage>;
+  },
 });
 
 function RouteComponent() {
   const data = Route.useLoaderData();
   return (
     <AuthGate dataStatus={data.status}>
-      <p>ADD A FEED</p>
+      <AddFeedPage />
     </AuthGate>
   );
 }

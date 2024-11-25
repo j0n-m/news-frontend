@@ -2,16 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { infiniteQueryOptions, keepPreviousData } from "@tanstack/react-query";
 import fetch from "../utils/fetch";
 import { FeedResponseSchema } from "../types/feed";
-import { queryClient } from "../App";
+import { queryClient } from "../routes/__root";
 import AuthGate from "../components/AuthGate";
 import { AxiosError } from "axios";
 import IndexAuth from "@/pages/Home/IndexAuth";
+import ErrorPage from "@/components/ErrorPage/Error";
 
 export type SearchDeps = {
   nextIndex?: number;
   limit?: number;
   skip?: number;
   n?: string;
+  redirect?: string;
 };
 
 export const getHomeFeed = () => {
@@ -30,10 +32,9 @@ export const getHomeFeed = () => {
         throw new Error("Invalid feed format");
       }
     },
-
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage!.nextStart,
-    staleTime: 1000 * 60 * 3,
+    // throwOnError: true,
     placeholderData: keepPreviousData,
   });
 };
@@ -46,17 +47,16 @@ export const Route = createFileRoute("/")({
       limit: Number(search.limit) || undefined,
     };
   },
-  loaderDeps: ({ search: { skip, limit, nextIndex } }) => {
-    return { skip, limit, nextIndex };
+  loaderDeps: ({ search: { skip, limit, nextIndex, redirect } }) => {
+    return { skip, limit, nextIndex, redirect };
   },
   loader: async () => {
     try {
       const res = await queryClient.ensureInfiniteQueryData(getHomeFeed());
       return res;
     } catch (error) {
-      console.log("error occured");
+      console.log("index route - error occured, determining status code");
       if ((error as AxiosError)?.status === 401) {
-        // throw redirect({ to: "/login" });
         return { isUnauthorized: true, status: 401 };
       }
       throw error;
@@ -65,8 +65,8 @@ export const Route = createFileRoute("/")({
   pendingComponent: () => {
     return <div>loading component...</div>;
   },
-  errorComponent: () => {
-    return <div>An Error Occured</div>;
+  errorComponent: ({ error, reset }) => {
+    return <ErrorPage error={error} reset={reset}></ErrorPage>;
   },
 });
 function TempRoute() {
@@ -74,10 +74,8 @@ function TempRoute() {
   type dataType = typeof data;
 
   return (
-    <>
-      <AuthGate dataStatus={(data as dataType & { status?: number }).status}>
-        <IndexAuth />
-      </AuthGate>
-    </>
+    <AuthGate dataStatus={(data as dataType & { status?: number })?.status}>
+      <IndexAuth />
+    </AuthGate>
   );
 }

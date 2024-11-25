@@ -7,7 +7,7 @@ import path from "path";
 export default defineConfig({
   plugins: [TanStackRouterVite(), react()],
   server: {
-    host: true,
+    // host: true,
   },
   resolve: {
     alias: {

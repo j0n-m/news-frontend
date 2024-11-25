@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as IndexImport } from './routes/index'
 import { Route as SignoutIndexImport } from './routes/signout/index'
 import { Route as SigninIndexImport } from './routes/signin/index'
@@ -18,6 +19,12 @@ import { Route as FeedIndexImport } from './routes/feed/index'
 import { Route as CreateFeedsImport } from './routes/create/feeds'
 
 // Create/Update Routes
+
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
     '/create/feeds': {
       id: '/create/feeds'
       path: '/create/feeds'
@@ -95,6 +109,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/create/feeds': typeof CreateFeedsRoute
   '/feed': typeof FeedIndexRoute
   '/signin': typeof SigninIndexRoute
@@ -103,6 +118,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/create/feeds': typeof CreateFeedsRoute
   '/feed': typeof FeedIndexRoute
   '/signin': typeof SigninIndexRoute
@@ -112,6 +128,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/create/feeds': typeof CreateFeedsRoute
   '/feed/': typeof FeedIndexRoute
   '/signin/': typeof SigninIndexRoute
@@ -120,15 +137,23 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create/feeds' | '/feed' | '/signin' | '/signout'
+  fullPaths: '/' | '/test' | '/create/feeds' | '/feed' | '/signin' | '/signout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create/feeds' | '/feed' | '/signin' | '/signout'
-  id: '__root__' | '/' | '/create/feeds' | '/feed/' | '/signin/' | '/signout/'
+  to: '/' | '/test' | '/create/feeds' | '/feed' | '/signin' | '/signout'
+  id:
+    | '__root__'
+    | '/'
+    | '/test'
+    | '/create/feeds'
+    | '/feed/'
+    | '/signin/'
+    | '/signout/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TestRoute: typeof TestRoute
   CreateFeedsRoute: typeof CreateFeedsRoute
   FeedIndexRoute: typeof FeedIndexRoute
   SigninIndexRoute: typeof SigninIndexRoute
@@ -137,6 +162,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TestRoute: TestRoute,
   CreateFeedsRoute: CreateFeedsRoute,
   FeedIndexRoute: FeedIndexRoute,
   SigninIndexRoute: SigninIndexRoute,
@@ -154,6 +180,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/test",
         "/create/feeds",
         "/feed/",
         "/signin/",
@@ -162,6 +189,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/test": {
+      "filePath": "test.tsx"
     },
     "/create/feeds": {
       "filePath": "create/feeds.tsx"

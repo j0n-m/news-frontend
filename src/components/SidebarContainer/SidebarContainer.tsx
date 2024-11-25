@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   SidebarContent,
   SidebarFooter,
@@ -14,6 +14,7 @@ import {
   SidebarGroupContent,
   SidebarInset,
   SidebarTrigger,
+  SidebarMenuSkeleton,
 } from "../ui/sidebar";
 import {
   HomeIcon,
@@ -30,7 +31,7 @@ import {
   UserCircleIcon,
 } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, Navigate, useLocation } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,9 +40,18 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  queryOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import fetch from "@/utils/fetch";
 import useAuth from "@/hooks/useAuth";
+import { useCookies } from "react-cookie";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { FeedFromSidebarSchema } from "@/types/feed";
+import { z } from "zod";
+import { User } from "@/types/user";
 
 type SidebarContainerProps = {
   children?: ReactNode;
@@ -83,23 +93,74 @@ const navItems: NavItem[] = [
     variant: "outline",
     link: "/create/feeds",
   },
+  {
+    id: 3,
+    label: "Test link",
+    icon: MailQuestion,
+    iconClassName: "size-6",
+    linkName: "",
+    link: "/test",
+  },
 ];
 const navFeeds = [];
+
+export function getUserFeeds(user: User | null) {
+  return queryOptions({
+    queryKey: ["myFeeds"],
+    queryFn: async () =>
+      await fetch.get(`/api/user/${user?.id || ""}/feeds`, {
+        withCredentials: true,
+      }),
+    placeholderData: keepPreviousData,
+    enabled: !!user,
+    // throwOnError: true,
+    select: (res) => {
+      const parseRes = z
+        .array(FeedFromSidebarSchema)
+        .safeParse(res.data?.user_feeds);
+      if (parseRes.success) {
+        return parseRes.data;
+      } else {
+        // throw new Error("Error in parsing feed data");
+        console.error("Error in parsing feed data");
+        return [];
+      }
+    },
+  });
+}
 
 function SidebarContainer({ children }: SidebarContainerProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { signOut } = useAuth();
-  // console.log('sidebar queryname',queryName);
-  // const myFeedsQuery = useQuery({
-  //   queryKey: ["myFeeds"],
-  //   queryFn: async () => await fetch.get(`/api/feed/${}`, { withCredentials: true }),
-  // });
-  console.log("sidebar pathname", location.pathname);
+  const { signOut, user } = useAuth();
+  // const [myFeeds, setMyFeeds] = useState<FeedFromSidebar[]>([]);
+  const [cookies] = useCookies(["sidebar:state"]);
+
+  const myFeeds = useQuery(getUserFeeds(user));
+  // console.log("sidebar feeds", feedsQuery.data?.data?.user_feeds);
+  // console.log("sidebar pathname", location.pathname);
+
+  // useEffect(() => {
+  //   if (feedsQuery.data) {
+  //     const parseRes = z
+  //       .array(FeedFromSidebarSchema)
+  //       .safeParse(feedsQuery.data?.data?.user_feeds);
+  //     if (parseRes.success) {
+  //       setMyFeeds(parseRes.data);
+  //     } else {
+  //       throw new Error("Error in parsing feed data");
+  //     }
+  //   }
+  // }, [feedsQuery.isSuccess, feedsQuery.data]);
+
+  if (myFeeds.status === "error") {
+    window.location.replace(`/signin?redirect=${location.pathname}`);
+    return null;
+  }
 
   return (
     <div className="content flex flex-col min-h-screen">
-      <SidebarProvider className="group">
+      <SidebarProvider className="group" open={cookies["sidebar:state"]}>
         <Sidebar collapsible="icon">
           <SidebarHeader>
             <SidebarMenu>
@@ -127,6 +188,7 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                       >
                         <Link
                           to={item.link}
+                          preload="intent"
                           // search={{ n: item.linkName }}
                           // mask={{ to: `${item.linkName}` }}
                         >
@@ -143,18 +205,35 @@ function SidebarContainer({ children }: SidebarContainerProps) {
               <SidebarGroupLabel>My Feeds</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {navFeeds.map((feed, i) => (
+                  {myFeeds.isLoading ? (
+                    <SidebarMenuItem>
+                      <SidebarMenuSkeleton className=""></SidebarMenuSkeleton>
+                    </SidebarMenuItem>
+                  ) : (myFeeds?.data?.length || 0) > 0 && myFeeds.isSuccess ? (
+                    myFeeds.data?.map((feed) => (
+                      <SidebarMenuItem key={feed._id}>
+                        <SidebarMenuButton>
+                          <span>{feed.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))
+                  ) : (
+                    <p className="px-2 italic group-data-[state=collapsed]:hidden">
+                      You have no feeds
+                    </p>
+                  )}
+
+                  {/* <p className="px-2 italic group-data-[state=collapsed]:hidden">
+                      You have no feeds
+                    </p> */}
+
+                  {/* {navFeeds.map((feed, i) => (
                     <SidebarMenuItem key={i}>
                       <SidebarMenuButton>
                         <span>something</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                  {navFeeds.length < 1 && (
-                    <p className="px-2 italic group-data-[state=collapsed]:hidden">
-                      You have no feeds
-                    </p>
-                  )}
+                  ))} */}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -166,18 +245,14 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuButton
                       size="lg"
+                      tooltip={`${user?.first_name}'s account`}
                       className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                      <div className="flex justify-between w-full items-center">
-                        <div className="flex items-center gap-2">
-                          <UserCircleIcon
-                            className="size-8"
-                            strokeWidth={1.25}
-                          ></UserCircleIcon>
-                          <span>User</span>
-                        </div>
-                        <ChevronsUpDownIcon className="size-4"></ChevronsUpDownIcon>
-                      </div>
+                      <Avatar className="size-8">
+                        <AvatarFallback>{`${user?.first_name[0] || ""}${user?.last_name[0] || ""}`}</AvatarFallback>
+                      </Avatar>
+                      <span>{user?.first_name}</span>
+                      <ChevronsUpDownIcon className="size-4 ml-auto"></ChevronsUpDownIcon>
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -186,9 +261,9 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                     sideOffset={4}
                     side={isMobile ? "bottom" : "right"}
                   >
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled={true}>
                       <SettingsIcon className="size-6"></SettingsIcon>
-                      <span>Settings</span>
+                      <span className="line-through">Settings</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={signOut}>
@@ -219,8 +294,7 @@ function SidebarContainer({ children }: SidebarContainerProps) {
               </div>
             </div>
           </header>
-          {/* <Separator orientation="horizontal" /> */}
-          <main className="px-4 py-3">{children}</main>
+          <div className="px-4 pt-3">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </div>

@@ -36,3 +36,22 @@ export type FeedResponse = z.infer<typeof FeedResponseSchema>;
 export type FeedResponseBySource = z.infer<typeof FeedResponseBySourceSchema>;
 export type Feed = z.infer<typeof FeedSchema>;
 export type FeedItem = z.infer<typeof FeedItemSchema>;
+
+export const FeedFromSidebarSchema = z.object({
+  _id: z.string(),
+  url: z.string(),
+  title: z.string(),
+  is_pinned: z.boolean(),
+  category: z.array(z.string()),
+  owner: z.string(),
+});
+export type FeedFromSidebar = z.infer<typeof FeedFromSidebarSchema>;
+
+export const GlobalFeedListSchema = z.array(
+  z.object({
+    url: z.string(),
+    title: z.string(),
+    category: z.array(z.string()),
+  })
+);
+export type GlobalFeedList = z.infer<typeof GlobalFeedListSchema>;

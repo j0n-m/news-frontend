@@ -1,4 +1,4 @@
-import { getRouteApi, useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { FeedItem } from "../../types/feed";
 import { useInView } from "react-intersection-observer";
@@ -31,42 +31,9 @@ function useHomeFeeds() {
 function IndexAuth() {
   const { data, error, fetchNextPage, hasNextPage, status } = useHomeFeeds();
   const { setFeedItemData } = useSelectedFeedItem();
-  const router = useRouter();
-  // const [pageData, setPageData] = useState<{
-  //   feedItem: FeedItem;
-  //   feedId: string;
-  // } | null>(null);
+
   const { ref, inView } = useInView();
   const navigate = useNavigate();
-
-  // const fetchFeeds = async ({ pageParam }: { pageParam: number | null }) => {
-  //   const res = await fetch("/api/home?startIndex=" + pageParam);
-  //   console.log("fetched data", res.data);
-  //   // const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
-  //   // if (feedSchemaRes.success) {
-  //   //   console.log("feedSchemaRes.data", feedSchemaRes.data);
-  //   //   return feedSchemaRes.data;
-  //   // } else {
-  //   //   console.error("invalid feed format");
-  //   // }
-  //   return res.data;
-  // };
-
-  // const {
-  //   data,
-  //   error,
-  //   fetchNextPage,
-  //   hasNextPage,
-  //   isFetching,
-  //   isFetchingNextPage,
-  //   status,
-  // } = useInfiniteQuery({
-  //   queryKey: ["home feed"],
-  //   queryFn: fetchFeeds,
-  //   initialPageParam: 0,
-  //   getNextPageParam: (lastPage, pages) => lastPage?.nextStart,
-  //   staleTime: 1000 * 60 * 3,
-  // });
 
   const handleCardClick = ({
     feedItem,
@@ -82,18 +49,27 @@ function IndexAuth() {
   };
 
   useEffect(() => {
-    // console.log(data);
-    // console.log("inview is ", inView);
     if (hasNextPage && inView) {
-      console.log("useEffect is fetching");
       fetchNextPage();
     }
   }, [inView]);
 
   return status === "error" ? (
-    <p>Error retrieving your feed</p>
+    <div>
+      <h1 className="text-2xl font-bold text-center">
+        Error retrieving your feed
+      </h1>
+      <div className="mt-4 flex items-center justify-center">
+        <a
+          href="/"
+          className="bg-sidebar hover:bg-sidebar-accent px-4 py-1 rounded-md"
+        >
+          Refresh your feed
+        </a>
+      </div>
+    </div>
   ) : (
-    <div className="container mx-auto py-4 relative">
+    <div className="container mx-auto pt-4 relative">
       {data?.pages?.map((page, i) => {
         return (
           <Fragment key={i}>
@@ -129,8 +105,15 @@ function IndexAuth() {
           </Fragment>
         );
       })}
-      <div className="absolute bottom-1" ref={ref}>
-        {hasNextPage ? "fetching more..." : ""}
+      <div
+        className={`${hasNextPage ? "" : "hidden"} absolute -bottom-[2rem] bg-transparent pointer-events-none left-[50%] -translate-x-[50%] after:content-[""] after:absolute pt-[10rem] after:bg-transparent`}
+        ref={ref}
+      >
+        {hasNextPage ? (
+          <div className="absolute left-0 bottom-0 size-6 rounded-full bg-transparent border-t-blue-500 border-[4px] animate-[spin_.8s_linear_infinite]"></div>
+        ) : (
+          "End"
+        )}
       </div>
     </div>
   );
