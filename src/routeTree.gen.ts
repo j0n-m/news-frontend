@@ -11,18 +11,20 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as TestImport } from './routes/test'
+import { Route as ProtectedImport } from './routes/_protected'
 import { Route as IndexImport } from './routes/index'
 import { Route as SignoutIndexImport } from './routes/signout/index'
-import { Route as SigninIndexImport } from './routes/signin/index'
 import { Route as FeedIndexImport } from './routes/feed/index'
-import { Route as CreateFeedsImport } from './routes/create/feeds'
+import { Route as ProtectedHomeImport } from './routes/_protected/home'
+import { Route as AuthSignupImport } from './routes/_auth/signup'
+import { Route as AuthSigninImport } from './routes/_auth/signin'
+import { Route as ProtectedSubscriptionsFeedIdImport } from './routes/_protected/subscriptions/$feedId'
+import { Route as ProtectedSubscribeFeedsImport } from './routes/_protected/subscribe/feeds'
 
 // Create/Update Routes
 
-const TestRoute = TestImport.update({
-  id: '/test',
-  path: '/test',
+const ProtectedRoute = ProtectedImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -38,22 +40,41 @@ const SignoutIndexRoute = SignoutIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SigninIndexRoute = SigninIndexImport.update({
-  id: '/signin/',
-  path: '/signin/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const FeedIndexRoute = FeedIndexImport.update({
   id: '/feed/',
   path: '/feed/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const CreateFeedsRoute = CreateFeedsImport.update({
-  id: '/create/feeds',
-  path: '/create/feeds',
+const ProtectedHomeRoute = ProtectedHomeImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+
+const AuthSignupRoute = AuthSignupImport.update({
+  id: '/_auth/signup',
+  path: '/signup',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthSigninRoute = AuthSigninImport.update({
+  id: '/_auth/signin',
+  path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProtectedSubscriptionsFeedIdRoute =
+  ProtectedSubscriptionsFeedIdImport.update({
+    id: '/subscriptions/$feedId',
+    path: '/subscriptions/$feedId',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+
+const ProtectedSubscribeFeedsRoute = ProtectedSubscribeFeedsImport.update({
+  id: '/subscribe/feeds',
+  path: '/subscribe/feeds',
+  getParentRoute: () => ProtectedRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -67,32 +88,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestImport
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedImport
       parentRoute: typeof rootRoute
     }
-    '/create/feeds': {
-      id: '/create/feeds'
-      path: '/create/feeds'
-      fullPath: '/create/feeds'
-      preLoaderRoute: typeof CreateFeedsImport
+    '/_auth/signin': {
+      id: '/_auth/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof AuthSigninImport
       parentRoute: typeof rootRoute
+    }
+    '/_auth/signup': {
+      id: '/_auth/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthSignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/_protected/home': {
+      id: '/_protected/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof ProtectedHomeImport
+      parentRoute: typeof ProtectedImport
     }
     '/feed/': {
       id: '/feed/'
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/signin/': {
-      id: '/signin/'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninIndexImport
       parentRoute: typeof rootRoute
     }
     '/signout/': {
@@ -102,70 +130,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignoutIndexImport
       parentRoute: typeof rootRoute
     }
+    '/_protected/subscribe/feeds': {
+      id: '/_protected/subscribe/feeds'
+      path: '/subscribe/feeds'
+      fullPath: '/subscribe/feeds'
+      preLoaderRoute: typeof ProtectedSubscribeFeedsImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/subscriptions/$feedId': {
+      id: '/_protected/subscriptions/$feedId'
+      path: '/subscriptions/$feedId'
+      fullPath: '/subscriptions/$feedId'
+      preLoaderRoute: typeof ProtectedSubscriptionsFeedIdImport
+      parentRoute: typeof ProtectedImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface ProtectedRouteChildren {
+  ProtectedHomeRoute: typeof ProtectedHomeRoute
+  ProtectedSubscribeFeedsRoute: typeof ProtectedSubscribeFeedsRoute
+  ProtectedSubscriptionsFeedIdRoute: typeof ProtectedSubscriptionsFeedIdRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedHomeRoute: ProtectedHomeRoute,
+  ProtectedSubscribeFeedsRoute: ProtectedSubscribeFeedsRoute,
+  ProtectedSubscriptionsFeedIdRoute: ProtectedSubscriptionsFeedIdRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
-  '/create/feeds': typeof CreateFeedsRoute
+  '': typeof ProtectedRouteWithChildren
+  '/signin': typeof AuthSigninRoute
+  '/signup': typeof AuthSignupRoute
+  '/home': typeof ProtectedHomeRoute
   '/feed': typeof FeedIndexRoute
-  '/signin': typeof SigninIndexRoute
   '/signout': typeof SignoutIndexRoute
+  '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
+  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
-  '/create/feeds': typeof CreateFeedsRoute
+  '': typeof ProtectedRouteWithChildren
+  '/signin': typeof AuthSigninRoute
+  '/signup': typeof AuthSignupRoute
+  '/home': typeof ProtectedHomeRoute
   '/feed': typeof FeedIndexRoute
-  '/signin': typeof SigninIndexRoute
   '/signout': typeof SignoutIndexRoute
+  '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
+  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
-  '/create/feeds': typeof CreateFeedsRoute
+  '/_protected': typeof ProtectedRouteWithChildren
+  '/_auth/signin': typeof AuthSigninRoute
+  '/_auth/signup': typeof AuthSignupRoute
+  '/_protected/home': typeof ProtectedHomeRoute
   '/feed/': typeof FeedIndexRoute
-  '/signin/': typeof SigninIndexRoute
   '/signout/': typeof SignoutIndexRoute
+  '/_protected/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
+  '/_protected/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test' | '/create/feeds' | '/feed' | '/signin' | '/signout'
+  fullPaths:
+    | '/'
+    | ''
+    | '/signin'
+    | '/signup'
+    | '/home'
+    | '/feed'
+    | '/signout'
+    | '/subscribe/feeds'
+    | '/subscriptions/$feedId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test' | '/create/feeds' | '/feed' | '/signin' | '/signout'
+  to:
+    | '/'
+    | ''
+    | '/signin'
+    | '/signup'
+    | '/home'
+    | '/feed'
+    | '/signout'
+    | '/subscribe/feeds'
+    | '/subscriptions/$feedId'
   id:
     | '__root__'
     | '/'
-    | '/test'
-    | '/create/feeds'
+    | '/_protected'
+    | '/_auth/signin'
+    | '/_auth/signup'
+    | '/_protected/home'
     | '/feed/'
-    | '/signin/'
     | '/signout/'
+    | '/_protected/subscribe/feeds'
+    | '/_protected/subscriptions/$feedId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  TestRoute: typeof TestRoute
-  CreateFeedsRoute: typeof CreateFeedsRoute
+  ProtectedRoute: typeof ProtectedRouteWithChildren
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
   FeedIndexRoute: typeof FeedIndexRoute
-  SigninIndexRoute: typeof SigninIndexRoute
   SignoutIndexRoute: typeof SignoutIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  TestRoute: TestRoute,
-  CreateFeedsRoute: CreateFeedsRoute,
+  ProtectedRoute: ProtectedRouteWithChildren,
+  AuthSigninRoute: AuthSigninRoute,
+  AuthSignupRoute: AuthSignupRoute,
   FeedIndexRoute: FeedIndexRoute,
-  SigninIndexRoute: SigninIndexRoute,
   SignoutIndexRoute: SignoutIndexRoute,
 }
 
@@ -180,30 +268,47 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/test",
-        "/create/feeds",
+        "/_protected",
+        "/_auth/signin",
+        "/_auth/signup",
         "/feed/",
-        "/signin/",
         "/signout/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/test": {
-      "filePath": "test.tsx"
+    "/_protected": {
+      "filePath": "_protected.tsx",
+      "children": [
+        "/_protected/home",
+        "/_protected/subscribe/feeds",
+        "/_protected/subscriptions/$feedId"
+      ]
     },
-    "/create/feeds": {
-      "filePath": "create/feeds.tsx"
+    "/_auth/signin": {
+      "filePath": "_auth/signin.tsx"
+    },
+    "/_auth/signup": {
+      "filePath": "_auth/signup.tsx"
+    },
+    "/_protected/home": {
+      "filePath": "_protected/home.tsx",
+      "parent": "/_protected"
     },
     "/feed/": {
       "filePath": "feed/index.tsx"
     },
-    "/signin/": {
-      "filePath": "signin/index.tsx"
-    },
     "/signout/": {
       "filePath": "signout/index.tsx"
+    },
+    "/_protected/subscribe/feeds": {
+      "filePath": "_protected/subscribe/feeds.tsx",
+      "parent": "/_protected"
+    },
+    "/_protected/subscriptions/$feedId": {
+      "filePath": "_protected/subscriptions/$feedId.tsx",
+      "parent": "/_protected"
     }
   }
 }

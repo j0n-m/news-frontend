@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import FeedItemCard from "../../components/FeedItemCard/FeedItemCard";
 import { Fragment, useEffect } from "react";
 import useSelectedFeedItem from "../../hooks/useSelectedFeedItem";
-import { getHomeFeed } from "../../routes";
+import { homeFeeds } from "@/queries/homeFeeds";
 
 function useHomeFeeds() {
   const {
@@ -16,7 +16,7 @@ function useHomeFeeds() {
     isFetching,
     isFetchingNextPage,
     status,
-  } = useSuspenseInfiniteQuery(getHomeFeed());
+  } = useSuspenseInfiniteQuery(homeFeeds());
 
   return {
     data,

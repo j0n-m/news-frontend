@@ -72,12 +72,19 @@ function AddFeedPage() {
             <div key={feed.url}>
               <div className="flex">
                 <h3 className="mr-3">{feed.title}</h3>
-                <button
-                  disabled={Boolean(mappedUserFeeds.get(feed.url))}
-                  onClick={() => handleAddFeed(feed)}
-                >
-                  +
-                </button>
+                {mappedUserFeeds.get(feed.url) ? (
+                  <button key={feed.url} disabled={true}>
+                    subscribed
+                  </button>
+                ) : (
+                  <button
+                    key={feed.url}
+                    onClick={() => handleAddFeed(feed)}
+                    disabled={addFeedMutation.isPending}
+                  >
+                    +
+                  </button>
+                )}
               </div>
             </div>
           ))}

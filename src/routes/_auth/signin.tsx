@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import fetch from "../../utils/fetch";
+import fetch from "@/utils/fetch";
 import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/signin/")({
+export const Route = createFileRoute("/_auth/signin")({
   component: RouteComponent,
 });
 

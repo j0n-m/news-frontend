@@ -3,9 +3,7 @@ import {
   Outlet,
   ScrollRestoration,
 } from "@tanstack/react-router";
-import React, { Suspense, useEffect } from "react";
-import useAuth from "./hooks/useAuth";
-import SidebarContainer from "./components/SidebarContainer/SidebarContainer";
+import React, { Suspense } from "react";
 import ErrorPage from "./components/ErrorPage/Error";
 
 const TanStackRouterDevtools =
@@ -22,12 +20,6 @@ const TanStackRouterDevtools =
 // const TanStackRouterDevtools = () => null;
 
 function App() {
-  const { user } = useAuth();
-
-  useEffect(() => {
-    console.log("app", user);
-  }, [user]);
-
   return (
     <CatchBoundary
       getResetKey={() => "reset"}
@@ -35,13 +27,7 @@ function App() {
         <ErrorPage error={error} reset={reset} />
       )}
     >
-      {user ? (
-        <SidebarContainer>
-          <Outlet></Outlet>
-        </SidebarContainer>
-      ) : (
-        <Outlet></Outlet>
-      )}
+      <Outlet></Outlet>
 
       <ScrollRestoration getKey={(location) => location.pathname} />
       <Suspense>
