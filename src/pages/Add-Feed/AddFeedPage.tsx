@@ -1,4 +1,3 @@
-import ErrorPage from "@/components/ErrorPage/Error";
 import { getUserFeeds } from "@/components/SidebarContainer/SidebarContainer";
 import useAuth from "@/hooks/useAuth";
 import { queryClient } from "@/routes/__root";
@@ -9,7 +8,6 @@ import {
 } from "@/types/feed";
 import fetch from "@/utils/fetch";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
 function AddFeedPage() {
   // const [globalFeeds, setGlobalFeeds] = useState<GlobalFeedList>([]);

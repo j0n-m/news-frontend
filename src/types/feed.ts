@@ -17,6 +17,8 @@ export const FeedSchema = z.object({
   feed_link: z.string(),
   feed_description: z.string().optional(),
   items: z.array(FeedItemSchema),
+  total_items: z.number(),
+  id: z.string(),
 });
 
 export const FeedResponseSchema = z.object({
@@ -55,3 +57,8 @@ export const GlobalFeedListSchema = z.array(
   })
 );
 export type GlobalFeedList = z.infer<typeof GlobalFeedListSchema>;
+export const SingleFeedSchema = z.object({
+  user_feed: z.array(FeedFromSidebarSchema),
+  rss_data: FeedSchema,
+});
+export type SingleFeed = z.infer<typeof SingleFeedSchema>;

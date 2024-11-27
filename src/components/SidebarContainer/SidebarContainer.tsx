@@ -58,6 +58,7 @@ import { FeedFromSidebarSchema } from "@/types/feed";
 import { z } from "zod";
 import { User } from "@/types/user";
 import { useDeleteMyFeed } from "@/hooks/useDeleteMyFeed";
+import { AxiosError } from "axios";
 
 type SidebarContainerProps = {
   children?: ReactNode;
@@ -105,7 +106,7 @@ const navItems: NavItem[] = [
     icon: FolderHeartIcon,
     iconClassName: "size-6",
     linkName: "",
-    link: "/home",
+    link: "/subscriptions/favorites",
   },
 ];
 const navFeeds: Array<{ [index: string]: any }> = [];
@@ -151,6 +152,7 @@ function SidebarContainer({ children }: SidebarContainerProps) {
   const myFeedMutate = useDeleteMyFeed(user);
   // console.log("sidebar feeds", feedsQuery.data?.data?.user_feeds);
   // console.log("sidebar pathname", location.pathname);
+  // console.log("myFeeds", myFeeds);
 
   useEffect(() => {
     if (isMobile) {
@@ -158,8 +160,16 @@ function SidebarContainer({ children }: SidebarContainerProps) {
     }
   }, [location.pathname]);
 
-  if (myFeeds.status === "error") {
-    window.location.replace(`/signin?redirect=${location.pathname}`);
+  if (myFeeds.status === "error" && !myFeeds.isLoading) {
+    console.log("myfeeds error", myFeeds.error);
+    if (myFeeds.error instanceof AxiosError) {
+      const statusCode = myFeeds.error.status;
+      if (statusCode === 401) {
+        window.location.replace(`/signin?redirect=${location.pathname}`);
+      } else {
+        throw myFeeds.error;
+      }
+    }
     return null;
   }
 
@@ -225,8 +235,9 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                       >
                         <Link
                           to={`/subscriptions/$feedId`}
-                          params={{ feedId: feed._id }}
+                          params={{ feedId: feed?._id }}
                           className=""
+                          preload="intent"
                         >
                           {({ isActive }) => (
                             <>
@@ -254,7 +265,8 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                           <DropdownMenuItem asChild>
                             <Link
                               to={`/subscriptions/$feedId`}
-                              params={{ feedId: feed._id }}
+                              params={{ feedId: feed?._id }}
+                              preload="intent"
                             >
                               <FolderOpenIcon />
 
@@ -334,7 +346,11 @@ function SidebarContainer({ children }: SidebarContainerProps) {
             </div>
           </div>
         </header>
-        <div className="px-4 pt-3">{children}</div>
+        <div className="px-4 pt-3">
+          <div className="page-container max-w-[1100px] mx-auto">
+            {children}
+          </div>
+        </div>
       </SidebarInset>
       {/* </SidebarProvider> */}
       {/* </div> */}

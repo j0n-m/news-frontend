@@ -3,7 +3,7 @@ import moment from "moment";
 
 type FeedItemCardProps = {
   feedItem: FeedItem;
-  feedId: string;
+  feedId?: string;
   // handleCardClick: ({
   //   feedItem,
   //   feedId,
@@ -20,7 +20,7 @@ const FeedItemCard = ({ feedItem }: FeedItemCardProps) => {
       : moment(momentDate).fromNow();
 
   return (
-    <div className="feed-item-card py-4 cursor-pointer">
+    <div className="feed-item-card py-4 px-1 lg:py-6 cursor-pointer">
       <div className="grid grid-cols-[1fr,100px] md:grid-cols-[1fr,100px] gap-2">
         <div className="left-side">
           <h2 className="md:text-lg">{feedItem.title}</h2>
@@ -31,6 +31,7 @@ const FeedItemCard = ({ feedItem }: FeedItemCardProps) => {
             <img
               src={feedItem.image_url}
               role="presentation"
+              loading="lazy"
               className="object-cover rounded-md w-[100px] max-h-[80px]"
             />
           )}

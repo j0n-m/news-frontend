@@ -4,9 +4,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryClient } from "../__root";
 import { homeFeeds } from "@/queries/homeFeeds";
 import IndexAuth from "@/pages/Home/IndexAuth";
+import FeedItemCardSkeleton from "@/components/Loading/FeedItemCardSkeleton";
 
 export const Route = createFileRoute("/_protected/home")({
-  component: RouteComponent,
+  component: () => <IndexAuth />,
   validateSearch: (search: Record<string, unknown>): SearchDeps => {
     return {
       skip: Number(search.skip) || undefined,
@@ -23,11 +24,11 @@ export const Route = createFileRoute("/_protected/home")({
   errorComponent: ({ error, reset }) => {
     return <ErrorPage error={error} reset={reset}></ErrorPage>;
   },
-  pendingComponent: () => {
-    return <p className="font-bold text-2xl">home is loading</p>;
-  },
+  pendingComponent: () => (
+    <div className="flex flex-col max-w-[1000px] mx-auto gap-4 ">
+      {Array.from({ length: 7 }).map((_, i) => (
+        <FeedItemCardSkeleton key={i} />
+      ))}
+    </div>
+  ),
 });
-
-function RouteComponent() {
-  return <IndexAuth></IndexAuth>;
-}

@@ -9,6 +9,7 @@ export const homeFeeds = () => {
       const res = await fetch.get("/api/home?startIndex=" + pageParam, {
         withCredentials: true,
       });
+      // console.log("home feed before parse", res.data);
       const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
       if (feedSchemaRes.success) {
         console.log("feedSchemaRes.data", feedSchemaRes.data);

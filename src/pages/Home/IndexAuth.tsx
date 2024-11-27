@@ -1,4 +1,4 @@
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { FeedItem } from "../../types/feed";
 import { useInView } from "react-intersection-observer";
@@ -29,24 +29,25 @@ function useHomeFeeds() {
   };
 }
 function IndexAuth() {
-  const { data, error, fetchNextPage, hasNextPage, status } = useHomeFeeds();
-  const { setFeedItemData } = useSelectedFeedItem();
-
-  const { ref, inView } = useInView();
+  const { data, fetchNextPage, hasNextPage, status } = useHomeFeeds();
+  // const { setFeedItemData } = useSelectedFeedItem();
   const navigate = useNavigate();
 
-  const handleCardClick = ({
-    feedItem,
-    feedId,
-  }: {
-    feedItem: FeedItem;
-    feedId: string;
-  }) => {
-    console.log(feedItem);
-    setFeedItemData(feedItem);
-    navigate({ to: "/feed", mask: { to: "/", unmaskOnReload: false } });
-    // setPageData({ feedId, feedItem });
-  };
+  const { ref, inView } = useInView();
+
+  // const handleCardClick = ({
+  //   feedItem,
+  //   feedId,
+  // }: {
+  //   feedItem: FeedItem;
+  //   feedId: string;
+  // }) => {
+  //   console.log(feedItem);
+  //   setFeedItemData(feedItem);
+  //   navigate({ to: "/feed", mask: { to: "/", unmaskOnReload: false } });
+  //   // setPageData({ feedId, feedItem });
+  // };
+  console.log(data);
 
   useEffect(() => {
     if (hasNextPage && inView) {
@@ -70,9 +71,9 @@ function IndexAuth() {
     </div>
   ) : (
     <div className="container mx-auto pt-4 relative">
-      {data?.pages?.map((page, i) => {
+      {data?.pages?.map((page, pageIndex) => {
         return (
-          <Fragment key={i}>
+          <Fragment key={pageIndex}>
             {page?.data?.map((feed, index) => {
               return (
                 <div key={index} className="mb-4 border-b">
@@ -84,17 +85,25 @@ function IndexAuth() {
                       <button
                         className="text-start"
                         key={feedItem.id}
-                        onClick={() =>
-                          handleCardClick({
-                            feedItem,
-                            feedId: feed.feed_title,
+                        onClick={async () =>
+                          await navigate({
+                            to: "/subscriptions/$feedId/$feedItemId/$page",
+                            params: {
+                              feedId: feed.id,
+                              feedItemId: feedItem.id.toString(),
+                              page: pageIndex.toString(),
+                            },
+                            mask: {
+                              to: "/subscriptions/$feedId",
+                              params: { feedId: feed.id },
+                              unmaskOnReload: false,
+                            },
                           })
                         }
                       >
                         <FeedItemCard
                           // key={feedItem.id}
                           feedItem={feedItem}
-                          feedId={feed.feed_title}
                         />
                       </button>
                     ))}

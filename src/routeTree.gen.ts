@@ -18,8 +18,11 @@ import { Route as FeedIndexImport } from './routes/feed/index'
 import { Route as ProtectedHomeImport } from './routes/_protected/home'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthSigninImport } from './routes/_auth/signin'
-import { Route as ProtectedSubscriptionsFeedIdImport } from './routes/_protected/subscriptions/$feedId'
+import { Route as ProtectedSubscriptionsFavoritesImport } from './routes/_protected/subscriptions/favorites'
 import { Route as ProtectedSubscribeFeedsImport } from './routes/_protected/subscribe/feeds'
+import { Route as ProtectedSubscriptionsFeedIdIndexImport } from './routes/_protected/subscriptions/$feedId/index'
+import { Route as ProtectedSubscriptionsFeedIdFeedItemIdImport } from './routes/_protected/subscriptions/$feedId/$feedItemId'
+import { Route as ProtectedSubscriptionsFeedIdFeedItemIdPageImport } from './routes/_protected/subscriptions/$feedId_/$feedItemId.$page'
 
 // Create/Update Routes
 
@@ -64,10 +67,10 @@ const AuthSigninRoute = AuthSigninImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ProtectedSubscriptionsFeedIdRoute =
-  ProtectedSubscriptionsFeedIdImport.update({
-    id: '/subscriptions/$feedId',
-    path: '/subscriptions/$feedId',
+const ProtectedSubscriptionsFavoritesRoute =
+  ProtectedSubscriptionsFavoritesImport.update({
+    id: '/subscriptions/favorites',
+    path: '/subscriptions/favorites',
     getParentRoute: () => ProtectedRoute,
   } as any)
 
@@ -76,6 +79,27 @@ const ProtectedSubscribeFeedsRoute = ProtectedSubscribeFeedsImport.update({
   path: '/subscribe/feeds',
   getParentRoute: () => ProtectedRoute,
 } as any)
+
+const ProtectedSubscriptionsFeedIdIndexRoute =
+  ProtectedSubscriptionsFeedIdIndexImport.update({
+    id: '/subscriptions/$feedId/',
+    path: '/subscriptions/$feedId/',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+
+const ProtectedSubscriptionsFeedIdFeedItemIdRoute =
+  ProtectedSubscriptionsFeedIdFeedItemIdImport.update({
+    id: '/subscriptions/$feedId/$feedItemId',
+    path: '/subscriptions/$feedId/$feedItemId',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+
+const ProtectedSubscriptionsFeedIdFeedItemIdPageRoute =
+  ProtectedSubscriptionsFeedIdFeedItemIdPageImport.update({
+    id: '/subscriptions/$feedId_/$feedItemId/$page',
+    path: '/subscriptions/$feedId/$feedItemId/$page',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -137,11 +161,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedSubscribeFeedsImport
       parentRoute: typeof ProtectedImport
     }
-    '/_protected/subscriptions/$feedId': {
-      id: '/_protected/subscriptions/$feedId'
+    '/_protected/subscriptions/favorites': {
+      id: '/_protected/subscriptions/favorites'
+      path: '/subscriptions/favorites'
+      fullPath: '/subscriptions/favorites'
+      preLoaderRoute: typeof ProtectedSubscriptionsFavoritesImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/subscriptions/$feedId/$feedItemId': {
+      id: '/_protected/subscriptions/$feedId/$feedItemId'
+      path: '/subscriptions/$feedId/$feedItemId'
+      fullPath: '/subscriptions/$feedId/$feedItemId'
+      preLoaderRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/subscriptions/$feedId/': {
+      id: '/_protected/subscriptions/$feedId/'
       path: '/subscriptions/$feedId'
       fullPath: '/subscriptions/$feedId'
-      preLoaderRoute: typeof ProtectedSubscriptionsFeedIdImport
+      preLoaderRoute: typeof ProtectedSubscriptionsFeedIdIndexImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/subscriptions/$feedId_/$feedItemId/$page': {
+      id: '/_protected/subscriptions/$feedId_/$feedItemId/$page'
+      path: '/subscriptions/$feedId/$feedItemId/$page'
+      fullPath: '/subscriptions/$feedId/$feedItemId/$page'
+      preLoaderRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdPageImport
       parentRoute: typeof ProtectedImport
     }
   }
@@ -152,13 +197,22 @@ declare module '@tanstack/react-router' {
 interface ProtectedRouteChildren {
   ProtectedHomeRoute: typeof ProtectedHomeRoute
   ProtectedSubscribeFeedsRoute: typeof ProtectedSubscribeFeedsRoute
-  ProtectedSubscriptionsFeedIdRoute: typeof ProtectedSubscriptionsFeedIdRoute
+  ProtectedSubscriptionsFavoritesRoute: typeof ProtectedSubscriptionsFavoritesRoute
+  ProtectedSubscriptionsFeedIdFeedItemIdRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
+  ProtectedSubscriptionsFeedIdIndexRoute: typeof ProtectedSubscriptionsFeedIdIndexRoute
+  ProtectedSubscriptionsFeedIdFeedItemIdPageRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedHomeRoute: ProtectedHomeRoute,
   ProtectedSubscribeFeedsRoute: ProtectedSubscribeFeedsRoute,
-  ProtectedSubscriptionsFeedIdRoute: ProtectedSubscriptionsFeedIdRoute,
+  ProtectedSubscriptionsFavoritesRoute: ProtectedSubscriptionsFavoritesRoute,
+  ProtectedSubscriptionsFeedIdFeedItemIdRoute:
+    ProtectedSubscriptionsFeedIdFeedItemIdRoute,
+  ProtectedSubscriptionsFeedIdIndexRoute:
+    ProtectedSubscriptionsFeedIdIndexRoute,
+  ProtectedSubscriptionsFeedIdFeedItemIdPageRoute:
+    ProtectedSubscriptionsFeedIdFeedItemIdPageRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
@@ -174,7 +228,10 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedIndexRoute
   '/signout': typeof SignoutIndexRoute
   '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
-  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
+  '/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
+  '/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
+  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdIndexRoute
+  '/subscriptions/$feedId/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
 }
 
 export interface FileRoutesByTo {
@@ -186,7 +243,10 @@ export interface FileRoutesByTo {
   '/feed': typeof FeedIndexRoute
   '/signout': typeof SignoutIndexRoute
   '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
-  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
+  '/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
+  '/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
+  '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdIndexRoute
+  '/subscriptions/$feedId/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
 }
 
 export interface FileRoutesById {
@@ -199,7 +259,10 @@ export interface FileRoutesById {
   '/feed/': typeof FeedIndexRoute
   '/signout/': typeof SignoutIndexRoute
   '/_protected/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
-  '/_protected/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdRoute
+  '/_protected/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
+  '/_protected/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
+  '/_protected/subscriptions/$feedId/': typeof ProtectedSubscriptionsFeedIdIndexRoute
+  '/_protected/subscriptions/$feedId_/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
 }
 
 export interface FileRouteTypes {
@@ -213,7 +276,10 @@ export interface FileRouteTypes {
     | '/feed'
     | '/signout'
     | '/subscribe/feeds'
+    | '/subscriptions/favorites'
+    | '/subscriptions/$feedId/$feedItemId'
     | '/subscriptions/$feedId'
+    | '/subscriptions/$feedId/$feedItemId/$page'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -224,7 +290,10 @@ export interface FileRouteTypes {
     | '/feed'
     | '/signout'
     | '/subscribe/feeds'
+    | '/subscriptions/favorites'
+    | '/subscriptions/$feedId/$feedItemId'
     | '/subscriptions/$feedId'
+    | '/subscriptions/$feedId/$feedItemId/$page'
   id:
     | '__root__'
     | '/'
@@ -235,7 +304,10 @@ export interface FileRouteTypes {
     | '/feed/'
     | '/signout/'
     | '/_protected/subscribe/feeds'
-    | '/_protected/subscriptions/$feedId'
+    | '/_protected/subscriptions/favorites'
+    | '/_protected/subscriptions/$feedId/$feedItemId'
+    | '/_protected/subscriptions/$feedId/'
+    | '/_protected/subscriptions/$feedId_/$feedItemId/$page'
   fileRoutesById: FileRoutesById
 }
 
@@ -283,7 +355,10 @@ export const routeTree = rootRoute
       "children": [
         "/_protected/home",
         "/_protected/subscribe/feeds",
-        "/_protected/subscriptions/$feedId"
+        "/_protected/subscriptions/favorites",
+        "/_protected/subscriptions/$feedId/$feedItemId",
+        "/_protected/subscriptions/$feedId/",
+        "/_protected/subscriptions/$feedId_/$feedItemId/$page"
       ]
     },
     "/_auth/signin": {
@@ -306,8 +381,20 @@ export const routeTree = rootRoute
       "filePath": "_protected/subscribe/feeds.tsx",
       "parent": "/_protected"
     },
-    "/_protected/subscriptions/$feedId": {
-      "filePath": "_protected/subscriptions/$feedId.tsx",
+    "/_protected/subscriptions/favorites": {
+      "filePath": "_protected/subscriptions/favorites.tsx",
+      "parent": "/_protected"
+    },
+    "/_protected/subscriptions/$feedId/$feedItemId": {
+      "filePath": "_protected/subscriptions/$feedId/$feedItemId.tsx",
+      "parent": "/_protected"
+    },
+    "/_protected/subscriptions/$feedId/": {
+      "filePath": "_protected/subscriptions/$feedId/index.tsx",
+      "parent": "/_protected"
+    },
+    "/_protected/subscriptions/$feedId_/$feedItemId/$page": {
+      "filePath": "_protected/subscriptions/$feedId_/$feedItemId.$page.tsx",
       "parent": "/_protected"
     }
   }
