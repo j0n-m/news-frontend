@@ -22,6 +22,7 @@ import { Route as ProtectedSubscriptionsFavoritesImport } from './routes/_protec
 import { Route as ProtectedSubscribeFeedsImport } from './routes/_protected/subscribe/feeds'
 import { Route as ProtectedSubscriptionsFeedIdIndexImport } from './routes/_protected/subscriptions/$feedId/index'
 import { Route as ProtectedSubscriptionsFeedIdFeedItemIdImport } from './routes/_protected/subscriptions/$feedId/$feedItemId'
+import { Route as ProtectedSubscriptionsFavoritesPageArrIndexImport } from './routes/_protected/subscriptions/favorites_/$page/$arrIndex'
 import { Route as ProtectedSubscriptionsFeedIdFeedItemIdPageImport } from './routes/_protected/subscriptions/$feedId_/$feedItemId.$page'
 
 // Create/Update Routes
@@ -91,6 +92,13 @@ const ProtectedSubscriptionsFeedIdFeedItemIdRoute =
   ProtectedSubscriptionsFeedIdFeedItemIdImport.update({
     id: '/subscriptions/$feedId/$feedItemId',
     path: '/subscriptions/$feedId/$feedItemId',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+
+const ProtectedSubscriptionsFavoritesPageArrIndexRoute =
+  ProtectedSubscriptionsFavoritesPageArrIndexImport.update({
+    id: '/subscriptions/favorites_/$page/$arrIndex',
+    path: '/subscriptions/favorites/$page/$arrIndex',
     getParentRoute: () => ProtectedRoute,
   } as any)
 
@@ -189,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdPageImport
       parentRoute: typeof ProtectedImport
     }
+    '/_protected/subscriptions/favorites_/$page/$arrIndex': {
+      id: '/_protected/subscriptions/favorites_/$page/$arrIndex'
+      path: '/subscriptions/favorites/$page/$arrIndex'
+      fullPath: '/subscriptions/favorites/$page/$arrIndex'
+      preLoaderRoute: typeof ProtectedSubscriptionsFavoritesPageArrIndexImport
+      parentRoute: typeof ProtectedImport
+    }
   }
 }
 
@@ -201,6 +216,7 @@ interface ProtectedRouteChildren {
   ProtectedSubscriptionsFeedIdFeedItemIdRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
   ProtectedSubscriptionsFeedIdIndexRoute: typeof ProtectedSubscriptionsFeedIdIndexRoute
   ProtectedSubscriptionsFeedIdFeedItemIdPageRoute: typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
+  ProtectedSubscriptionsFavoritesPageArrIndexRoute: typeof ProtectedSubscriptionsFavoritesPageArrIndexRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
@@ -213,6 +229,8 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
     ProtectedSubscriptionsFeedIdIndexRoute,
   ProtectedSubscriptionsFeedIdFeedItemIdPageRoute:
     ProtectedSubscriptionsFeedIdFeedItemIdPageRoute,
+  ProtectedSubscriptionsFavoritesPageArrIndexRoute:
+    ProtectedSubscriptionsFavoritesPageArrIndexRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
@@ -232,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
   '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdIndexRoute
   '/subscriptions/$feedId/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
+  '/subscriptions/favorites/$page/$arrIndex': typeof ProtectedSubscriptionsFavoritesPageArrIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -247,6 +266,7 @@ export interface FileRoutesByTo {
   '/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
   '/subscriptions/$feedId': typeof ProtectedSubscriptionsFeedIdIndexRoute
   '/subscriptions/$feedId/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
+  '/subscriptions/favorites/$page/$arrIndex': typeof ProtectedSubscriptionsFavoritesPageArrIndexRoute
 }
 
 export interface FileRoutesById {
@@ -263,6 +283,7 @@ export interface FileRoutesById {
   '/_protected/subscriptions/$feedId/$feedItemId': typeof ProtectedSubscriptionsFeedIdFeedItemIdRoute
   '/_protected/subscriptions/$feedId/': typeof ProtectedSubscriptionsFeedIdIndexRoute
   '/_protected/subscriptions/$feedId_/$feedItemId/$page': typeof ProtectedSubscriptionsFeedIdFeedItemIdPageRoute
+  '/_protected/subscriptions/favorites_/$page/$arrIndex': typeof ProtectedSubscriptionsFavoritesPageArrIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -280,6 +301,7 @@ export interface FileRouteTypes {
     | '/subscriptions/$feedId/$feedItemId'
     | '/subscriptions/$feedId'
     | '/subscriptions/$feedId/$feedItemId/$page'
+    | '/subscriptions/favorites/$page/$arrIndex'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -294,6 +316,7 @@ export interface FileRouteTypes {
     | '/subscriptions/$feedId/$feedItemId'
     | '/subscriptions/$feedId'
     | '/subscriptions/$feedId/$feedItemId/$page'
+    | '/subscriptions/favorites/$page/$arrIndex'
   id:
     | '__root__'
     | '/'
@@ -308,6 +331,7 @@ export interface FileRouteTypes {
     | '/_protected/subscriptions/$feedId/$feedItemId'
     | '/_protected/subscriptions/$feedId/'
     | '/_protected/subscriptions/$feedId_/$feedItemId/$page'
+    | '/_protected/subscriptions/favorites_/$page/$arrIndex'
   fileRoutesById: FileRoutesById
 }
 
@@ -358,7 +382,8 @@ export const routeTree = rootRoute
         "/_protected/subscriptions/favorites",
         "/_protected/subscriptions/$feedId/$feedItemId",
         "/_protected/subscriptions/$feedId/",
-        "/_protected/subscriptions/$feedId_/$feedItemId/$page"
+        "/_protected/subscriptions/$feedId_/$feedItemId/$page",
+        "/_protected/subscriptions/favorites_/$page/$arrIndex"
       ]
     },
     "/_auth/signin": {
@@ -395,6 +420,10 @@ export const routeTree = rootRoute
     },
     "/_protected/subscriptions/$feedId_/$feedItemId/$page": {
       "filePath": "_protected/subscriptions/$feedId_/$feedItemId.$page.tsx",
+      "parent": "/_protected"
+    },
+    "/_protected/subscriptions/favorites_/$page/$arrIndex": {
+      "filePath": "_protected/subscriptions/favorites_/$page/$arrIndex.tsx",
       "parent": "/_protected"
     }
   }

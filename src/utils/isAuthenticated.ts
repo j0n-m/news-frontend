@@ -1,14 +1,10 @@
 import { queryClient } from "@/routes/__root";
-import fetch from "./fetch";
+import { authQueryOptions } from "@/queries/authQuery";
 
 export async function isAuthenticated() {
   try {
-    const res = await fetch.get("/auth/", {
-      withCredentials: true,
-    });
-    const { isAuth, user } = res.data;
-    // console.log("isauthenticated", res, isAuth);
-    queryClient.setQueryData(["auth"], user);
+    const res = await queryClient.fetchQuery(authQueryOptions());
+    const { isAuth } = res.data;
     return isAuth;
   } catch (e) {
     console.error("isauthenticated", e);

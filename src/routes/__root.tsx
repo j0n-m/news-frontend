@@ -7,6 +7,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CatchBoundary, createRootRoute } from "@tanstack/react-router";
 import { CookiesProvider } from "react-cookie";
 import { Toaster } from "@/components/ui/toaster";
+import "../App.css";
+import SidebarTitleProvider from "@/context/sidebarTitleContext";
 
 export const queryClient = new QueryClient();
 
@@ -20,13 +22,15 @@ export const Route = createRootRoute({
     >
       <QueryClientProvider client={queryClient}>
         <UserAuthProvider>
-          <FeedItemDataContextProvider>
-            <CookiesProvider defaultSetOptions={{ path: "/" }}>
-              <App />
-              <Toaster></Toaster>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </CookiesProvider>
-          </FeedItemDataContextProvider>
+          <SidebarTitleProvider>
+            <FeedItemDataContextProvider>
+              <CookiesProvider defaultSetOptions={{ path: "/" }}>
+                <App />
+                <Toaster></Toaster>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </CookiesProvider>
+            </FeedItemDataContextProvider>
+          </SidebarTitleProvider>
         </UserAuthProvider>
       </QueryClientProvider>
     </CatchBoundary>

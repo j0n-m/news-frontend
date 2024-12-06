@@ -1,0 +1,27 @@
+.feed-details {
+  margin-inline: auto;
+  line-height: 1.7;
+}
+.feed-details img {
+  /* max-width: 100%; */
+  max-height: 500px;
+  margin-inline: auto;
+  /* margin: 2rem 0 1rem 0; */
+  object-fit: contain;
+  aspect-ratio: auto;
+  border-radius: 10px;
+}
+.feed-details a {
+  text-decoration: underline;
+  margin-inline: auto;
+  text-underline-offset: 2px;
+  &:hover,
+  &:focus-visible {
+    color: #0071c7;
+  }
+}
+.feed-details p {
+  font-size: large;
+  margin: 12px 0;
+  /* white-space: pre-wrap; */
+}

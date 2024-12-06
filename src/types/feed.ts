@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CategorySchema } from "./categories";
 
 export const FeedItemSchema = z.object({
   content: z.string().optional(),
@@ -47,18 +48,54 @@ export const FeedFromSidebarSchema = z.object({
   category: z.array(z.string()),
   owner: z.string(),
 });
+//api/user/feeds
 export type FeedFromSidebar = z.infer<typeof FeedFromSidebarSchema>;
 
-export const GlobalFeedListSchema = z.array(
-  z.object({
-    url: z.string(),
-    title: z.string(),
-    category: z.array(z.string()),
-  })
-);
-export type GlobalFeedList = z.infer<typeof GlobalFeedListSchema>;
 export const SingleFeedSchema = z.object({
   user_feed: z.array(FeedFromSidebarSchema),
   rss_data: FeedSchema,
 });
 export type SingleFeed = z.infer<typeof SingleFeedSchema>;
+
+export const GlobalFeedSchema = z.object({
+  _id: z.string(),
+  url: z.string(),
+  title: z.string(),
+  category: z.array(z.string()),
+});
+export type GlobalFeed = z.infer<typeof GlobalFeedSchema>;
+
+export const GlobalFeedsInfoSchema = z.object({
+  total_records: z.number(),
+  content_length: z.number(),
+  page_limit: z.number(),
+  next: z.number().nullable(),
+});
+export type GlobalFeedsInfo = z.infer<typeof GlobalFeedsInfoSchema>;
+
+export const GlobalFeedsResponseSchema = z.object({
+  feeds_info: z.array(GlobalFeedsInfoSchema),
+  feeds: z.array(GlobalFeedSchema),
+});
+export type GlobalFeedsResponse = z.infer<typeof GlobalFeedsResponseSchema>;
+
+export const GlobalFeedByCategoryInfoSchema = z.object({
+  total_records: z.number(),
+});
+export const GlobalFeedByCategoryDataSchema = z.object({
+  _id: z.string(),
+  feed_count: z.number(),
+  feeds: z.array(GlobalFeedSchema),
+  category_info: CategorySchema,
+});
+export const GlobalFeedsByCategoryElementSchema = z.object({
+  feeds: z.array(
+    z.object({
+      feed_info: GlobalFeedByCategoryInfoSchema,
+      feed_data: z.array(GlobalFeedByCategoryDataSchema),
+    })
+  ),
+});
+export type GlobalFeedsByCategoryResponse = z.infer<
+  typeof GlobalFeedsByCategoryElementSchema
+>;

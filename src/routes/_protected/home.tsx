@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_protected/home")({
   },
   pendingComponent: () => (
     <div className="flex flex-col max-w-[1000px] mx-auto gap-4 ">
-      {Array.from({ length: 7 }).map((_, i) => (
+      {Array.from({ length: 10 }).map((_, i) => (
         <FeedItemCardSkeleton key={i} />
       ))}
     </div>

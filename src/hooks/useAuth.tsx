@@ -2,12 +2,10 @@ import { UserAuthContext } from "@/context/userAuthContext";
 import { queryClient } from "@/routes/__root";
 import fetch from "@/utils/fetch";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { useContext } from "react";
 
 export default function useAuth() {
   const { user, setUser } = useContext(UserAuthContext);
-  const router = useRouter();
 
   const signOutMutate = useMutation({
     mutationKey: ["signOut"],
@@ -28,9 +26,7 @@ export default function useAuth() {
         const runAfterSignOut = async () => {
           setUser(null);
           queryClient.clear();
-          await router.navigate({ to: "/" });
-          await router.invalidate();
-          // await navigate({ to: "/", replace: true });
+          window.location.replace("/");
         };
         runAfterSignOut();
       },

@@ -1,11 +1,13 @@
+import FeedDetails from "@/components/FeedItemPage/FeedDetails";
+import { singleFeedQueryOptions } from "@/queries/singleFeed";
 import { queryClient } from "@/routes/__root";
 import { SingleFeed } from "@/types/feed";
+import { User } from "@/types/user";
 import {
-  redirect,
-  createFileRoute,
-  useLoaderData,
-  useParams,
-} from "@tanstack/react-router";
+  useSuspenseQuery,
+  UseSuspenseQueryResult,
+} from "@tanstack/react-query";
+import { redirect, createFileRoute, useParams } from "@tanstack/react-router";
 import { AxiosResponse } from "axios";
 
 export const Route = createFileRoute(
@@ -28,18 +30,29 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const feedItem = useLoaderData({
+  const params = useParams({
     from: "/_protected/subscriptions/$feedId/$feedItemId",
   });
-  const { feedItemId } = useParams({
-    from: "/_protected/subscriptions/$feedId/$feedItemId",
-  });
-  // console.log(feedItem);
+  const userCache = queryClient.getQueryData(["user"]) as AxiosResponse<User>;
+  const user = userCache.data;
+
+  const singleFeedQuery = useSuspenseQuery(
+    singleFeedQueryOptions(params.feedId, user)
+  ) as UseSuspenseQueryResult<SingleFeed>;
+
+  const feedItemId = singleFeedQuery.data?.user_feed[0]._id;
+  const feedItem =
+    singleFeedQuery.data.rss_data.items[Number(params.feedItemId)];
+
   return (
-    <div>
-      <p>Hello /_protected/subscriptions/$feedId/$feedItemId!</p>
-      <p>itemid: {feedItemId}</p>
-      <p>{feedItem.data.rss_data.items[parseInt(feedItemId)].title}</p>
-    </div>
+    <>
+      {feedItem && (
+        <FeedDetails
+          feedItem={feedItem}
+          feedId={feedItemId}
+          feedTitle={singleFeedQuery.data.user_feed[0].title}
+        />
+      )}
+    </>
   );
 }

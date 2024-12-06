@@ -9,10 +9,8 @@ export const homeFeeds = () => {
       const res = await fetch.get("/api/home?startIndex=" + pageParam, {
         withCredentials: true,
       });
-      // console.log("home feed before parse", res.data);
       const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
       if (feedSchemaRes.success) {
-        console.log("feedSchemaRes.data", feedSchemaRes.data);
         return feedSchemaRes.data;
       } else {
         console.error("invalid feed format");
@@ -20,10 +18,9 @@ export const homeFeeds = () => {
       }
     },
     initialPageParam: 0,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getNextPageParam: (lastPage, pages) => lastPage!.nextStart,
-    // throwOnError: true,
-    staleTime: 1000 * 60 * 3,
+
+    getNextPageParam: (lastPage) => lastPage!.nextStart,
+    staleTime: 1000 * 60 * 10,
     placeholderData: keepPreviousData,
   });
 };

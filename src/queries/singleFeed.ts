@@ -11,6 +11,7 @@ export const singleFeedQueryOptions = (feedId: string, user: User | null) => {
       }),
     enabled: !!user,
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 10,
     select: (res) => res.data,
   });
 };
