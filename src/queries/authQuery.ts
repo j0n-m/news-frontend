@@ -5,7 +5,7 @@ const authQueryOptions = () =>
   queryOptions({
     queryKey: ["user"],
     queryFn: async () => await fetch.get("/auth/", { withCredentials: true }),
-    retry: (failureCount) => failureCount < 1,
+    retry: false,
     staleTime: 1000 * 5,
   });
 

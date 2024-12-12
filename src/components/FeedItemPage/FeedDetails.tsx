@@ -12,6 +12,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 import moment from "moment";
 import { Separator } from "../ui/separator";
+import DOMPurify from "dompurify";
 
 type FeedDetailsProps = {
   feedItem: FeedItem;
@@ -23,6 +24,10 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
   const [isArticleSaved, setIsArticleSaved] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const sanitizedHTML = DOMPurify.sanitize(feedItem?.content || "", {
+    ALLOWED_ATTR: ["src", "href", "sizes", "class"],
+    FORBID_TAGS: ["nav"],
+  });
 
   const savedArticleQuery = useQuery({
     queryKey: ["userSavedArticle", feedItem.url_id],
@@ -64,11 +69,11 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
     } else {
       //save article to be saved
       if (user) {
-        console.log("saving article...");
+        console.log("saving article...", feedTitle);
         saveArticleMutate.mutate(
           {
             data: feedItem,
-            userId: user.id,
+            userId: user?.id || "",
             feedId,
             feedTitle,
           },
@@ -104,6 +109,7 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
       setIsArticleSaved(true);
     }
   }, [savedArticleQuery.isSuccess]);
+
   return (
     <>
       <div className="mb-4 flex items-center">
@@ -152,6 +158,12 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
           <div className="">
             {moment(new Date(feedItem.pubDate)).format("lll")}
           </div>
+          {feedTitle && (
+            <>
+              <Separator className="" orientation="vertical"></Separator>
+              <div className="">{feedTitle}</div>
+            </>
+          )}
         </div>
         {!hasImg && (
           <img
@@ -163,7 +175,10 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
         )}
         <div
           className="py-4"
-          dangerouslySetInnerHTML={{ __html: feedItem?.content || "" }}
+          // dangerouslySetInnerHTML={{ __html: feedItem?.content || "" }}
+          dangerouslySetInnerHTML={{
+            __html: sanitizedHTML,
+          }}
         ></div>
       </div>
       <hr />

@@ -34,7 +34,7 @@ function ErrorPage({ error, reset }: ErrorPageProps) {
   const { toast } = useToast();
   const toasterRef = useRef<HTMLButtonElement>(null);
 
-  console.log("error page", "error", error, "reset", reset);
+  // console.log("error page", "error", error, "reset", reset);
 
   useEffect(() => {
     // Reset the query error boundary
@@ -44,7 +44,7 @@ function ErrorPage({ error, reset }: ErrorPageProps) {
       //   reset();
       // }
     }
-    console.log("error useeffect");
+    // console.log("error useeffect");
     queryErrorResetBoundary?.reset();
     toasterRef?.current?.click();
     // if (reset) {
@@ -55,7 +55,7 @@ function ErrorPage({ error, reset }: ErrorPageProps) {
 
   return (
     <CatchBoundary
-      onCatch={(error) => console.error("error in catchBoundary ->", error)}
+      onCatch={(error) => console.error("error ->", error)}
       getResetKey={() => "reset"}
     >
       <div className="flex gap-4 justify-center items-center">
@@ -67,14 +67,10 @@ function ErrorPage({ error, reset }: ErrorPageProps) {
           onClick={() => {
             toast({
               open: showToast,
-              duration: 1000 * 60 * 60,
+              duration: 1000 * 60,
               onOpenChange: (open) => setShowToast(open),
               variant: "destructive",
-              title: (
-                <span className="font-bold text-lg">
-                  Uh oh! An error occured
-                </span>
-              ),
+              title: "Uh oh! An error occured",
               description: `Reason: ${reason}`,
               action: (
                 <ToastAction

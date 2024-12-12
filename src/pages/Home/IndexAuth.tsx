@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SavedFeedItem } from "@/types/feed";
 
 function useHomeFeeds() {
   const {
@@ -37,6 +38,12 @@ function useHomeFeeds() {
 function IndexAuth() {
   const { data, fetchNextPage, hasNextPage, status } = useHomeFeeds();
   // const { setFeedItemData } = useSelectedFeedItem();
+  const favoritesMap: Map<string, SavedFeedItem> = new Map();
+  data.pages.forEach((page) => {
+    page?.savedFeedInfo?.forEach((d) => {
+      favoritesMap.set(d._id, d.feed_info);
+    });
+  });
 
   const { ref, inView } = useInView();
 
@@ -72,6 +79,7 @@ function IndexAuth() {
                   feed={feed}
                   isInfinitePagination={true}
                   pageIndex={pageIndex}
+                  favoritesMap={favoritesMap}
                 />
               );
             })}

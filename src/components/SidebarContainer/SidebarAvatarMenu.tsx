@@ -44,7 +44,7 @@ function SidebarAvatarMenu({
               {isInSidebar ? (
                 <ChevronsUpDownIcon className="size-4 ml-auto" />
               ) : (
-                <ChevronDownIcon className="size-4 ml-auto group-data-[state=open]:rotate-180 transition-all duration-[200ms]" />
+                <ChevronDownIcon className="size-4 ml-auto group-data-[state=open]:rotate-180 transition-all duration-300" />
               )}
             </SidebarMenuButton>
           </DropdownMenuTrigger>

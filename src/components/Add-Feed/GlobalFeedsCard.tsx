@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { GlobalFeed } from "@/types/feed";
 import { PlusIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { CheckIcon } from "lucide-react";
 
@@ -19,8 +19,8 @@ function GlobalFeedsCard({
   currentFeed,
   mappedUserFeeds,
   handleAddFeed,
-  addIsPending,
 }: GlobalFeedsCardProps) {
+  const [addIsClicked, setAddIsClicked] = useState(false);
   return (
     <div
       className={cn(
@@ -46,10 +46,13 @@ function GlobalFeedsCard({
           <>
             <Button
               variant={"outline"}
-              disabled={addIsPending}
+              disabled={addIsClicked}
               title={`Subscribe to ${currentFeed.title}`}
               aria-label={`Subscribe to ${currentFeed.title}`}
-              onClick={() => handleAddFeed(currentFeed)}
+              onClick={() => {
+                handleAddFeed(currentFeed);
+                setAddIsClicked(true);
+              }}
               size={"sm"}
             >
               <PlusIcon />

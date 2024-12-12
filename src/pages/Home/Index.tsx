@@ -4,7 +4,9 @@ function Index() {
   return (
     <>
       <Nav />
-      <div>Index</div>
+      <div className="pt-8">
+        <div className="min-h-svh">home</div>
+      </div>
     </>
   );
 }

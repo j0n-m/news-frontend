@@ -5,13 +5,16 @@ function Nav() {
     <nav className="p-4 border">
       <ul className="flex items-center justify-end gap-5">
         <li>
+          <Link to="/">News RSS</Link>
+        </li>
+        <li className="ml-auto">
           <Link to="/">Home</Link>
         </li>
         <li>
           <Link to="/signin">Sign In</Link>
         </li>
         <li>
-          <Link to="/signout">Sign Out</Link>
+          <Link to="/signup">Sign Up</Link>
         </li>
       </ul>
     </nav>

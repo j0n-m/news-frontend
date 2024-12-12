@@ -143,6 +143,7 @@ function AddCustomFeedTab({ user }: { user: User }) {
                   <Label>Feed Title</Label>
                   <Input
                     type="text"
+                    className="mt-1"
                     name={field.name}
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
@@ -171,6 +172,8 @@ function AddCustomFeedTab({ user }: { user: User }) {
                   <Label>Feed URL</Label>
                   <Input
                     type="url"
+                    className="mt-1"
+                    placeholder="e.g https://www.nature.com/nature.rss"
                     name={field.name}
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
@@ -184,11 +187,17 @@ function AddCustomFeedTab({ user }: { user: User }) {
         </div>
         <div className="mt-6">
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isPristine,
+            ]}
+            children={([canSubmit, isSubmitting, isPristine]) => (
               <Button
                 type="submit"
-                disabled={!canSubmit || createFeedMutation.isPending}
+                disabled={
+                  !canSubmit || createFeedMutation.isPending || isPristine
+                }
                 aria-disabled={!canSubmit || createFeedMutation.isPending}
               >
                 {isSubmitting ? "...." : "Submit"}

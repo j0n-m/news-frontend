@@ -12,9 +12,9 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProtectedImport } from './routes/_protected'
+import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as SignoutIndexImport } from './routes/signout/index'
-import { Route as FeedIndexImport } from './routes/feed/index'
 import { Route as ProtectedHomeImport } from './routes/_protected/home'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthSigninImport } from './routes/_auth/signin'
@@ -32,6 +32,11 @@ const ProtectedRoute = ProtectedImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthRoute = AuthImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -44,12 +49,6 @@ const SignoutIndexRoute = SignoutIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const FeedIndexRoute = FeedIndexImport.update({
-  id: '/feed/',
-  path: '/feed/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const ProtectedHomeRoute = ProtectedHomeImport.update({
   id: '/home',
   path: '/home',
@@ -57,15 +56,15 @@ const ProtectedHomeRoute = ProtectedHomeImport.update({
 } as any)
 
 const AuthSignupRoute = AuthSignupImport.update({
-  id: '/_auth/signup',
+  id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 const AuthSigninRoute = AuthSigninImport.update({
-  id: '/_auth/signin',
+  id: '/signin',
   path: '/signin',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 const ProtectedSubscriptionsFavoritesRoute =
@@ -120,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
     '/_protected': {
       id: '/_protected'
       path: ''
@@ -132,14 +138,14 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof AuthSigninImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof AuthImport
     }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof AuthSignupImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof AuthImport
     }
     '/_protected/home': {
       id: '/_protected/home'
@@ -147,13 +153,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/home'
       preLoaderRoute: typeof ProtectedHomeImport
       parentRoute: typeof ProtectedImport
-    }
-    '/feed/': {
-      id: '/feed/'
-      path: '/feed'
-      fullPath: '/feed'
-      preLoaderRoute: typeof FeedIndexImport
-      parentRoute: typeof rootRoute
     }
     '/signout/': {
       id: '/signout/'
@@ -209,6 +208,18 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface AuthRouteChildren {
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthSigninRoute: AuthSigninRoute,
+  AuthSignupRoute: AuthSignupRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface ProtectedRouteChildren {
   ProtectedHomeRoute: typeof ProtectedHomeRoute
   ProtectedSubscribeFeedsRoute: typeof ProtectedSubscribeFeedsRoute
@@ -243,7 +254,6 @@ export interface FileRoutesByFullPath {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/home': typeof ProtectedHomeRoute
-  '/feed': typeof FeedIndexRoute
   '/signout': typeof SignoutIndexRoute
   '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
   '/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
@@ -259,7 +269,6 @@ export interface FileRoutesByTo {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/home': typeof ProtectedHomeRoute
-  '/feed': typeof FeedIndexRoute
   '/signout': typeof SignoutIndexRoute
   '/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
   '/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
@@ -272,11 +281,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_protected/home': typeof ProtectedHomeRoute
-  '/feed/': typeof FeedIndexRoute
   '/signout/': typeof SignoutIndexRoute
   '/_protected/subscribe/feeds': typeof ProtectedSubscribeFeedsRoute
   '/_protected/subscriptions/favorites': typeof ProtectedSubscriptionsFavoritesRoute
@@ -294,7 +303,6 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/home'
-    | '/feed'
     | '/signout'
     | '/subscribe/feeds'
     | '/subscriptions/favorites'
@@ -309,7 +317,6 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/home'
-    | '/feed'
     | '/signout'
     | '/subscribe/feeds'
     | '/subscriptions/favorites'
@@ -320,11 +327,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_auth'
     | '/_protected'
     | '/_auth/signin'
     | '/_auth/signup'
     | '/_protected/home'
-    | '/feed/'
     | '/signout/'
     | '/_protected/subscribe/feeds'
     | '/_protected/subscriptions/favorites'
@@ -337,19 +344,15 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  AuthSigninRoute: typeof AuthSigninRoute
-  AuthSignupRoute: typeof AuthSignupRoute
-  FeedIndexRoute: typeof FeedIndexRoute
   SignoutIndexRoute: typeof SignoutIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRouteWithChildren,
   ProtectedRoute: ProtectedRouteWithChildren,
-  AuthSigninRoute: AuthSigninRoute,
-  AuthSignupRoute: AuthSignupRoute,
-  FeedIndexRoute: FeedIndexRoute,
   SignoutIndexRoute: SignoutIndexRoute,
 }
 
@@ -364,15 +367,20 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_auth",
         "/_protected",
-        "/_auth/signin",
-        "/_auth/signup",
-        "/feed/",
         "/signout/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_auth": {
+      "filePath": "_auth.tsx",
+      "children": [
+        "/_auth/signin",
+        "/_auth/signup"
+      ]
     },
     "/_protected": {
       "filePath": "_protected.tsx",
@@ -387,17 +395,16 @@ export const routeTree = rootRoute
       ]
     },
     "/_auth/signin": {
-      "filePath": "_auth/signin.tsx"
+      "filePath": "_auth/signin.tsx",
+      "parent": "/_auth"
     },
     "/_auth/signup": {
-      "filePath": "_auth/signup.tsx"
+      "filePath": "_auth/signup.tsx",
+      "parent": "/_auth"
     },
     "/_protected/home": {
       "filePath": "_protected/home.tsx",
       "parent": "/_protected"
-    },
-    "/feed/": {
-      "filePath": "feed/index.tsx"
     },
     "/signout/": {
       "filePath": "signout/index.tsx"

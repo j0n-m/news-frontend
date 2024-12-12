@@ -1,6 +1,8 @@
+import ErrorPage from "@/components/ErrorPage/Error";
 import SidebarContainer from "@/components/SidebarContainer/SidebarContainer";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import useAuth from "@/hooks/useAuth";
+import NotFoundPage from "@/pages/404/NotFoundPage";
 import { authQueryOptions } from "@/queries/authQuery";
 import { UserSchema } from "@/types/user";
 import { isAuthenticated } from "@/utils/isAuthenticated";
@@ -11,6 +13,10 @@ import { useCookies } from "react-cookie";
 
 export const Route = createFileRoute("/_protected")({
   component: RouteComponent,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: ({ error, reset }) => (
+    <ErrorPage error={error} reset={reset} />
+  ),
   beforeLoad: async ({ location }) => {
     const isAuth = await isAuthenticated();
     if (!isAuth) {
@@ -34,14 +40,6 @@ function RouteComponent() {
       setUser(UserSchema.parse(userQuery.data.data.user));
     }
   }, [userQuery.isSuccess]);
-  // useEffect(() => {
-  //   const error = userQuery.error;
-  //   if (error && error instanceof AxiosError) {
-  //     if (error.status === 401) {
-  //       window.location.replace(`/signin?redirect=${location.pathname}`);
-  //     }
-  //   }
-  // }, [userQuery.isError]);
 
   return (
     <SidebarProvider className="group" open={cookies["sidebar:state"]}>

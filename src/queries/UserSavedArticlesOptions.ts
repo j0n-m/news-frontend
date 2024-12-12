@@ -7,7 +7,7 @@ const UserSavedArticlesOptions = (userId: string) =>
     queryFn: async () =>
       await fetch.get(`/api/user/${userId}/saved-feed-items`),
     enabled: !!userId,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   });
 
 export default UserSavedArticlesOptions;

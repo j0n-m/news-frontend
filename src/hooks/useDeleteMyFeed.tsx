@@ -10,6 +10,7 @@ export function useDeleteMyFeed(user: User | null) {
       await fetch.delete(`/api/user/${user?.id}/feed/${feedId}`),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
+      await queryClient.invalidateQueries({ queryKey: ["home"] });
     },
     onError: (error) => {
       console.error(error);

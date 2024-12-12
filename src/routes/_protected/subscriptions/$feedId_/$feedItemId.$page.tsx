@@ -1,4 +1,5 @@
 import FeedDetails from "@/components/FeedItemPage/FeedDetails";
+import NotFoundPage from "@/pages/404/NotFoundPage";
 import { queryClient } from "@/routes/__root";
 import { FeedResponse } from "@/types/feed";
 import { InfiniteData } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ export const Route = createFileRoute(
   "/_protected/subscriptions/$feedId_/$feedItemId/$page"
 )({
   component: RouteComponent,
+  notFoundComponent: () => <NotFoundPage />,
   loader: async () => {
     const cachedFeedList = queryClient.getQueriesData({
       queryKey: ["home"],

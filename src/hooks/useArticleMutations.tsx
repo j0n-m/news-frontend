@@ -26,7 +26,10 @@ function useArticleMutations() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["userSavedArticle"] });
       await queryClient.invalidateQueries({ queryKey: ["userSavedArticles"] });
-      console.log("article saved!");
+      await queryClient.invalidateQueries({ queryKey: ["home"] });
+      queryClient.invalidateQueries({
+        queryKey: ["singleFeed"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -44,6 +47,11 @@ function useArticleMutations() {
       await fetch.delete(`/api/user/${userId}/saved-feed-item/${feedItemId}`),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["userSavedArticle"] });
+      await queryClient.invalidateQueries({ queryKey: ["userSavedArticles"] });
+      await queryClient.invalidateQueries({ queryKey: ["home"] });
+      queryClient.invalidateQueries({
+        queryKey: ["singleFeed"],
+      });
       //in /favorites an error would occur (out of arr index error) if removed from there and updated
       // await queryClient.invalidateQueries({ queryKey: ["userSavedArticles"] });
       console.log("article removed!");

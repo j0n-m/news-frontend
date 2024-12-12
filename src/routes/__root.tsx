@@ -9,10 +9,12 @@ import { CookiesProvider } from "react-cookie";
 import { Toaster } from "@/components/ui/toaster";
 import "../App.css";
 import SidebarTitleProvider from "@/context/sidebarTitleContext";
+import NotFoundPage from "@/pages/404/NotFoundPage";
 
 export const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
+  notFoundComponent: () => <NotFoundPage />,
   component: () => (
     <CatchBoundary
       getResetKey={() => "reset"}

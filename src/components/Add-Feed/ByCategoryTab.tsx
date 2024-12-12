@@ -52,7 +52,7 @@ function ByCategoryTab({
                         mappedUserFeeds={mappedUserFeeds}
                         handleAddFeed={handleAddFeed}
                         addIsPending={addIsPending}
-                        props={{ className: "px-2" }}
+                        props={{ className: "px-4" }}
                       />
                     );
                   })}

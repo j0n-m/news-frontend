@@ -45,6 +45,9 @@ function AddFeedPage() {
       await queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
       await queryClient.invalidateQueries({ queryKey: ["globalFeeds"] });
       await queryClient.invalidateQueries({ queryKey: ["home"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["userSavedArticles"],
+      });
     },
     onError: (e) => {
       console.log(e);
@@ -89,14 +92,15 @@ function AddFeedPage() {
   );
 
   return (
-    <div className="tab-container pb-5 px-3 md:max-w-[750px] md:mx-auto transition-all duration-500">
+    <div className="tab-container pb-6 pt-4 px-3 md:max-w-[750px] md:mx-auto transition-all duration-500">
       <Tabs defaultValue="feeds">
         <TabsList className="">
           <TabsTrigger value="feeds">Search Feeds</TabsTrigger>
           <TabsTrigger value="add_my_own">Add My Own Feed</TabsTrigger>
         </TabsList>
         <TabsContent value="feeds">
-          <Accordion type="single" collapsible defaultValue="by_all">
+          {/* defaultValue="by_all" */}
+          <Accordion type="single" collapsible>
             <ByCategoryTab
               mappedUserFeeds={mappedUserFeeds}
               handleAddFeed={handleAddFeed}

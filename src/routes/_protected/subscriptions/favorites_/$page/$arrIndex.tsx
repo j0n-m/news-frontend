@@ -1,20 +1,40 @@
 import { queryClient } from "@/routes/__root";
-import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  redirect,
+  useParams,
+  useSearch,
+} from "@tanstack/react-router";
 import { User } from "@/types/user";
 import { InfiniteData, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import UserSavedArticlesInfiniteOptions from "@/queries/UserSavedArticlesInfiniteOptions";
 import { AxiosResponse } from "axios";
-import { SavedFeed } from "@/types/saved-feed";
+import { SavedFeed } from "@/types/feed";
 import FeedDetails from "@/components/FeedItemPage/FeedDetails";
+import NotFoundPage from "@/pages/404/NotFoundPage";
+import { QuerySearch } from "../../favorites";
 
 export const Route = createFileRoute(
   "/_protected/subscriptions/favorites_/$page/$arrIndex"
 )({
   component: RouteComponent,
-  beforeLoad: async ({ params: { page, arrIndex } }) => {
+  notFoundComponent: () => <NotFoundPage />,
+  validateSearch: (search: Record<string, unknown>): QuerySearch => {
+    return {
+      q: search?.q as string,
+    };
+  },
+  loaderDeps: ({ search }) => {
+    return {
+      q: search.q,
+    };
+  },
+  beforeLoad: async ({ params: { page, arrIndex }, search: { q } }) => {
     //redirect if not cached or params are out of range
+
     const cachedList = queryClient.getQueryData([
       "userSavedArticles",
+      { q: q },
     ]) as InfiniteData<SavedFeed>;
     const item =
       cachedList?.pages[parseInt(page)]?.saved_feed_items[parseInt(arrIndex)]
@@ -32,11 +52,14 @@ function RouteComponent() {
   const { page, arrIndex } = useParams({
     from: "/_protected/subscriptions/favorites_/$page/$arrIndex",
   });
+  const query = useSearch({
+    from: "/_protected/subscriptions/favorites_/$page/$arrIndex",
+  });
   const cachedUser = queryClient.getQueryData(["user"]) as AxiosResponse;
   const user = cachedUser.data?.user as User;
 
   const savedFeedQuery = useSuspenseInfiniteQuery(
-    UserSavedArticlesInfiniteOptions(user.id)
+    UserSavedArticlesInfiniteOptions(user.id, query.q)
   );
   const feed =
     savedFeedQuery.data.pages[Number(page)].saved_feed_items[Number(arrIndex)];
@@ -48,7 +71,7 @@ function RouteComponent() {
         <FeedDetails
           feedItem={feedItem}
           feedId={feed?.feed?._id || ""}
-          feedTitle={feed.fallback_feed_title}
+          feedTitle={feed.feed?.title || feed.fallback_feed_title}
         ></FeedDetails>
       )}
     </>

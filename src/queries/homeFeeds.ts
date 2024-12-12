@@ -9,11 +9,14 @@ export const homeFeeds = () => {
       const res = await fetch.get("/api/home?startIndex=" + pageParam, {
         withCredentials: true,
       });
+      // console.log(res?.data);
       const feedSchemaRes = FeedResponseSchema.safeParse(res?.data);
+
       if (feedSchemaRes.success) {
         return feedSchemaRes.data;
       } else {
-        console.error("invalid feed format");
+        // console.error("invalid feed format", res?.data, feedSchemaRes.error);
+        console.error("invalid feed format", feedSchemaRes.error);
         throw new Error("Invalid feed format");
       }
     },
