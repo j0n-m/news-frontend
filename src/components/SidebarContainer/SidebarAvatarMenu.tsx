@@ -1,14 +1,8 @@
-import {
-  ChevronDownIcon,
-  ChevronsUpDownIcon,
-  LogOutIcon,
-  SettingsIcon,
-} from "lucide-react";
+import { ChevronDownIcon, ChevronsUpDownIcon, LogOutIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
@@ -54,11 +48,6 @@ function SidebarAvatarMenu({
             sideOffset={4}
             side={isMobile ? "bottom" : "right"}
           >
-            <DropdownMenuItem disabled={true}>
-              <SettingsIcon className="size-6"></SettingsIcon>
-              <span className="line-through">Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={signOut}>
               <LogOutIcon className="size-6"></LogOutIcon>
               <span>Sign Out</span>

@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import moment from "moment";
 import { Separator } from "../ui/separator";
 import DOMPurify from "dompurify";
+import { Helmet } from "react-helmet-async";
 
 type FeedDetailsProps = {
   feedItem: FeedItem;
@@ -112,6 +113,9 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
 
   return (
     <>
+      <Helmet>
+        <title>News RSS - {feedItem?.title || feedTitle}</title>
+      </Helmet>
       <div className="mb-4 flex items-center">
         <Button
           variant="outline"

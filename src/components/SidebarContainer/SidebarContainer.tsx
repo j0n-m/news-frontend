@@ -100,6 +100,7 @@ export function getUserFeeds(user: User | null) {
     retry: (failureCount) => {
       return failureCount < 2;
     },
+    staleTime: 1000 * 60 * 2,
     // throwOnError: true,
     select: (res) => {
       const parseRes = z
@@ -231,8 +232,7 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                     <SidebarMenuButton
                       tooltip={item.label}
                       variant={item?.variant || "default"}
-                      // isActive={item.link === location.pathname}
-                      isActive={location.pathname.includes(item.linkName)}
+                      isActive={item.link === location.pathname}
                       asChild
                     >
                       <Link to={item.link}>
@@ -270,6 +270,7 @@ function SidebarContainer({ children }: SidebarContainerProps) {
                       isMobile={isMobile}
                       handleDelete={handleDeleteFeed}
                       handleRenameFeed={handleRenameFeed}
+                      pathName={location.pathname}
                     />
                   ))
                 ) : (
@@ -299,10 +300,17 @@ function SidebarContainer({ children }: SidebarContainerProps) {
             <SidebarTrigger className="size-8" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex items-center justify-between flex-1">
-              <h1 className="text-lg">
+              {/* <h1 className="text-lg">
                 {myFeedMap.get(location.pathname.split("/")[2]) ||
                   sidebarItemsMap.get(location.pathname.split("/")[1]) ||
                   "Home"}
+              </h1> */}
+              <h1 className="text-lg">
+                <Link to={location.maskedLocation?.pathname}>
+                  {myFeedMap.get(location.pathname.split("/")[2]) ||
+                    sidebarItemsMap.get(location.pathname.split("/")[1]) ||
+                    "Home"}
+                </Link>
               </h1>
               {/* <div className="flex gap-2 items-center">
                 {sidebarInsetObj.icon && (

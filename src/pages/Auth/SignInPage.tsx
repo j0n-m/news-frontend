@@ -16,6 +16,7 @@ import { zodValidator } from "@tanstack/zod-form-adapter";
 import { z } from "zod";
 import { AxiosError, AxiosResponse } from "axios";
 import { ErrorResponse } from "@/types/errors";
+import { Helmet } from "react-helmet-async";
 
 function SignInPage() {
   const { signInMutate } = useSignIn();
@@ -105,6 +106,9 @@ function SignInPage() {
 
   return (
     <div>
+      <Helmet>
+        <title>News RSS - Sign In</title>
+      </Helmet>
       <Card className="max-w-[350px] mx-auto">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>

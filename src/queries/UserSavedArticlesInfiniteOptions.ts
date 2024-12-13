@@ -1,6 +1,6 @@
 import { SavedFeed, SavedFeedSchema } from "@/types/feed";
 import fetch from "@/utils/fetch";
-import { infiniteQueryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, keepPreviousData } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 
 const UserSavedArticlesInfiniteOptions = (userId: string, query?: string) =>
@@ -20,6 +20,7 @@ const UserSavedArticlesInfiniteOptions = (userId: string, query?: string) =>
     staleTime: 1000 * 60 * 5,
     getNextPageParam: (lastPage) => lastPage?.saved_items_info[0]?.next,
     initialPageParam: 0,
+    placeholderData: keepPreviousData,
     enabled: !!userId,
   });
 

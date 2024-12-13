@@ -10,7 +10,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { AxiosResponse } from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import SavedFeedItemCard from "@/components/FeedItemCard/SavedFeedItemCard";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ import FeedItemCardSettingsBtn from "@/components/FeedItemCard/FeedItemCardSetti
 import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
+import { Helmet } from "react-helmet-async";
 
 export type QuerySearch = {
   q?: string;
@@ -57,6 +58,7 @@ function RouteComponent() {
   const user = cachedUser.data?.user as User;
   const navigate = useNavigate({ from: "/subscriptions/favorites" });
   const { ref, inView } = useInView();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const savedFeedQuery = useSuspenseInfiniteQuery(
     UserSavedArticlesInfiniteOptions(user.id, query.q)
   );
@@ -141,6 +143,7 @@ function RouteComponent() {
                         className="group"
                         placeholder="Search in your saved feeds"
                         aria-label="Search in your saved feeds"
+                        ref={searchInputRef}
                         id={field.name}
                         name={field.name}
                         maxLength={50}
@@ -149,7 +152,10 @@ function RouteComponent() {
                       ></Input>
                       {field.state.value.length > 0 && (
                         <button
-                          onClick={() => field.form.reset({ query: "" })}
+                          onClick={() => {
+                            field.form.reset({ query: "" });
+                            searchInputRef.current?.focus();
+                          }}
                           type="button"
                           className={
                             "absolute top-[6px] rounded-full right-14 flex items-center hover:bg-accent p-1 transition-colors duration-200"
@@ -199,7 +205,7 @@ function RouteComponent() {
           {"Saved Articles"}
         </h1>
         {savedFeedQuery.data?.pages[0]?.saved_items_info[0]?.total_records && (
-          <p>
+          <p className="text-muted-foreground">
             ({savedFeedQuery.data.pages[0].saved_items_info[0].total_records})
           </p>
         )}
@@ -207,6 +213,9 @@ function RouteComponent() {
       {savedFeedQuery.data.pages.map((page, pageIndex) => {
         return (
           <div className="flex flex-col gap-4 pb-3" key={pageIndex}>
+            <Helmet>
+              <title>News RSS - Saved Articles </title>
+            </Helmet>
             {page.saved_feed_items.map((savedFeed, i) => {
               return (
                 <div className="saved-card" key={savedFeed._id}>

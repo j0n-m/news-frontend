@@ -16,6 +16,7 @@ import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { AxiosError, AxiosResponse } from "axios";
+import { Helmet } from "react-helmet-async";
 import { z } from "zod";
 
 function SignUpPage() {
@@ -113,6 +114,9 @@ function SignUpPage() {
   });
   return (
     <div>
+      <Helmet>
+        <title>News RSS - Sign Up</title>
+      </Helmet>
       <Card className="max-w-[350px] mx-auto">
         <CardHeader>
           <CardTitle>Create an account</CardTitle>

@@ -9,6 +9,7 @@ import { User } from "@/types/user";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound, useParams } from "@tanstack/react-router";
 import { AxiosError, AxiosResponse } from "axios";
+import { Helmet } from "react-helmet-async";
 
 export const Route = createFileRoute("/_protected/subscriptions/$feedId/")({
   component: RouteComponent,
@@ -54,6 +55,9 @@ function RouteComponent() {
 
   return (
     <div className="container mx-auto pt-4 relative">
+      <Helmet>
+        <title>News RSS - {feedInfo.title}</title>
+      </Helmet>
       <FeedPageSection
         feed={query.rss_data}
         feedData={feedInfo}

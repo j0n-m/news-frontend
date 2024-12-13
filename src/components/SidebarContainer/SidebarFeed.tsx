@@ -38,12 +38,14 @@ type SidebarFeedProps = {
   isMobile: boolean;
   handleDelete: (feed: FeedFromSidebar) => void;
   handleRenameFeed: (feedId: string, newFeedTitle: string) => Promise<void>;
+  pathName: string;
 };
 function SidebarFeed({
   feed,
   isMobile,
   handleDelete,
   handleRenameFeed,
+  pathName,
 }: SidebarFeedProps) {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -172,7 +174,7 @@ function SidebarFeed({
           className=""
           tooltip={feed.title}
           title={feed.title}
-          isActive={location.pathname.includes(feed._id)}
+          isActive={pathName.includes(feed._id)}
           asChild
         >
           <Link

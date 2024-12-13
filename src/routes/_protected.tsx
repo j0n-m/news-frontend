@@ -7,7 +7,13 @@ import { authQueryOptions } from "@/queries/authQuery";
 import { UserSchema } from "@/types/user";
 import { isAuthenticated } from "@/utils/isAuthenticated";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 
@@ -34,12 +40,17 @@ function RouteComponent() {
   const { user, setUser } = useAuth();
   const [cookies] = useCookies(["sidebar:state"]);
   const userQuery = useSuspenseQuery(authQueryOptions());
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!user && userQuery.isSuccess) {
       setUser(UserSchema.parse(userQuery.data.data.user));
     }
-  }, [userQuery.isSuccess]);
+    if (userQuery.status === "error") {
+      navigate({ to: "/signin", search: { redirect: location.pathname } });
+    }
+  }, [userQuery.isSuccess, userQuery.status]);
 
   return (
     <SidebarProvider className="group" open={cookies["sidebar:state"]}>

@@ -44,3 +44,6 @@
   margin: 20px 0;
   overflow-x: hidden !important;
 }
+.feed-details .buylink__container {
+  display: none !important;
+}

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SavedFeedItem } from "@/types/feed";
+import { Helmet } from "react-helmet-async";
 
 function useHomeFeeds() {
   const {
@@ -69,6 +70,9 @@ function IndexAuth() {
     </div>
   ) : status === "success" ? (
     <div className="container mx-auto pt-4 relative">
+      <Helmet>
+        <title>News RSS - Home</title>
+      </Helmet>
       {data?.pages?.map((page, pageIndex) => {
         return (
           <Fragment key={pageIndex}>

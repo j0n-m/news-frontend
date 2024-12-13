@@ -17,7 +17,8 @@ import {
   useSuspenseInfiniteQuery,
 } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
+import { Helmet } from "react-helmet-async";
 
 function AddFeedPage() {
   // const [globalFeeds, setGlobalFeeds] = useState<GlobalFeedList>([]);
@@ -76,12 +77,16 @@ function AddFeedPage() {
           });
         },
         onError: (e) => {
-          toast({
-            title: "Uh oh! Error adding feed",
-            variant: "destructive",
-            description: e.message,
-            duration: 3000,
-          });
+          if (e instanceof AxiosError) {
+            const message = e.response?.data?.errors[0]?.message as string;
+
+            toast({
+              title: "Uh oh! Error adding feed",
+              variant: "destructive",
+              description: "Reason: " + message,
+              duration: 3000,
+            });
+          }
         },
       });
     }
@@ -93,6 +98,9 @@ function AddFeedPage() {
 
   return (
     <div className="tab-container pb-6 pt-4 px-3 md:max-w-[750px] md:mx-auto transition-all duration-500">
+      <Helmet>
+        <title>News RSS - Add a feed</title>
+      </Helmet>
       <Tabs defaultValue="feeds">
         <TabsList className="">
           <TabsTrigger value="feeds">Search Feeds</TabsTrigger>

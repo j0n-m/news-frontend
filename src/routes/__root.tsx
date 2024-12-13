@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "../App.css";
 import SidebarTitleProvider from "@/context/sidebarTitleContext";
 import NotFoundPage from "@/pages/404/NotFoundPage";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 export const queryClient = new QueryClient();
 
@@ -23,17 +24,22 @@ export const Route = createRootRoute({
       )}
     >
       <QueryClientProvider client={queryClient}>
-        <UserAuthProvider>
-          <SidebarTitleProvider>
-            <FeedItemDataContextProvider>
-              <CookiesProvider defaultSetOptions={{ path: "/" }}>
-                <App />
-                <Toaster></Toaster>
-                <ReactQueryDevtools initialIsOpen={false} />
-              </CookiesProvider>
-            </FeedItemDataContextProvider>
-          </SidebarTitleProvider>
-        </UserAuthProvider>
+        <HelmetProvider>
+          <UserAuthProvider>
+            <SidebarTitleProvider>
+              <FeedItemDataContextProvider>
+                <CookiesProvider defaultSetOptions={{ path: "/" }}>
+                  <Helmet>
+                    <title>News RSS: Stay up-to-date with your feed</title>
+                  </Helmet>
+                  <App />
+                  <Toaster></Toaster>
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </CookiesProvider>
+              </FeedItemDataContextProvider>
+            </SidebarTitleProvider>
+          </UserAuthProvider>
+        </HelmetProvider>
       </QueryClientProvider>
     </CatchBoundary>
   ),

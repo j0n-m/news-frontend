@@ -4,7 +4,9 @@ import { queryClient } from "@/routes/__root";
 import { FeedResponse } from "@/types/feed";
 import { InfiniteData } from "@tanstack/react-query";
 import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
+import { Helmet } from "react-helmet-async";
 
+//used for home route feed item details
 export const Route = createFileRoute(
   "/_protected/subscriptions/$feedId_/$feedItemId/$page"
 )({
@@ -42,6 +44,9 @@ function RouteComponent() {
 
   return (
     <>
+      <Helmet>
+        <title>News RSS - {feedItem?.title}</title>
+      </Helmet>
       {feedItem && (
         <FeedDetails
           feedItem={feedItem}
