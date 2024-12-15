@@ -16,7 +16,7 @@ export const homeFeeds = () => {
         return feedSchemaRes.data;
       } else {
         // console.error("invalid feed format", res?.data, feedSchemaRes.error);
-        console.error("invalid feed format", feedSchemaRes.error);
+        console.error("invalid feed format");
         throw new Error("Invalid feed format");
       }
     },

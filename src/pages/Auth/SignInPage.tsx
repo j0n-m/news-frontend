@@ -137,6 +137,7 @@ function SignInPage() {
                         name="emailInput"
                         type="email"
                         placeholder="example@email.com"
+                        autoComplete="email"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -163,6 +164,7 @@ function SignInPage() {
                         className="mt-1"
                         name="passInput"
                         type="password"
+                        autoComplete="current-password"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}

@@ -144,7 +144,7 @@ function FeedDetails({ feedItem, feedId, feedTitle }: FeedDetailsProps) {
               // className="group-data-[state=on]:text-gray-500 group-data-[state=on]:fill-gray-500 transition-all duration-500"
               className="group-data-[state=on]:fill-[#FFD700] transition-all duration-500 group-data-[state=on]:scale-110"
               size={20}
-              strokeWidth={1.5}
+              strokeWidth={1}
             />
           </Toggle>
         )}

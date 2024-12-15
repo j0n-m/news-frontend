@@ -1,20 +1,30 @@
+import useScrollPosition from "@/hooks/useScrollPosition";
 import { Link } from "@tanstack/react-router";
+import { Button } from "../ui/button";
+import { RssIcon } from "lucide-react";
 
 function Nav() {
+  const scrollPosition = useScrollPosition();
   return (
-    <nav className="p-4 border">
-      <ul className="flex items-center justify-end gap-5">
+    <nav
+      className={`sticky top-0 px-4 py-3 z-10 bg-white ${scrollPosition > 0 ? "shadow-md" : ""}`}
+    >
+      <ul className="flex items-center justify-end gap-6">
         <li>
-          <Link to="/">News RSS</Link>
+          <Link to="/" className="font-bold text-lg flex gap-1">
+            <RssIcon />
+            <span>News RSS</span>
+          </Link>
         </li>
         <li className="ml-auto">
-          <Link to="/">Home</Link>
+          <Link to="/signin" className="hover:opacity-75">
+            Sign In
+          </Link>
         </li>
         <li>
-          <Link to="/signin">Sign In</Link>
-        </li>
-        <li>
-          <Link to="/signup">Sign Up</Link>
+          <Button variant={"blue"} asChild>
+            <Link to="/signup">Sign Up</Link>
+          </Button>
         </li>
       </ul>
     </nav>

@@ -6,8 +6,7 @@ const authQueryOptions = () =>
     queryKey: ["user"],
     queryFn: async () => await fetch.get("/auth/", { withCredentials: true }),
     retry: false,
-    staleTime: 1000 * 5,
-    throwOnError: true,
+    throwOnError: false,
   });
 
 export { authQueryOptions };

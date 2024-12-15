@@ -13,6 +13,19 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   text-rendering: optimizeLegibility;
 }
+#index::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/src/assets/images/main-bg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* background-position: right; */
+  background-position: 100%;
+  background-size: cover;
+  filter: opacity(50%);
+  z-index: -999;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

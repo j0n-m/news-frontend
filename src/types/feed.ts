@@ -124,5 +124,5 @@ export type SingleFeed = z.infer<typeof SingleFeedSchema>;
 export const FeedResponseSchema = z.object({
   data: z.array(FeedSchema).optional(),
   nextStart: z.any(),
-  savedFeedInfo: z.array(SavedFeedInfoSchema),
+  savedFeedInfo: z.array(SavedFeedInfoSchema).optional(),
 });
