@@ -20,8 +20,7 @@
   background-image: url("/src/assets/images/main-bg.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
-  /* background-position: right; */
-  background-position: 100%;
+  background-position: right;
   background-size: cover;
   filter: opacity(50%);
   z-index: -999;
