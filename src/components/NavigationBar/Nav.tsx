@@ -7,7 +7,7 @@ function Nav() {
   const scrollPosition = useScrollPosition();
   return (
     <nav
-      className={`sticky top-0 px-4 py-3 z-10 ${scrollPosition > 0 ? "shadow-md bg-white" : "bg-transparent"} transition-all duration-500`}
+      className={`sticky top-0 px-4 py-3 z-50 ${scrollPosition > 0 ? "shadow-md bg-white" : "bg-transparent"} transition-all duration-500`}
     >
       <ul className="flex items-center justify-end gap-6">
         <li>

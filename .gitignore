@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+test-results
+playwright
 bundle-visualization.html
 
 # Editor directories and files
@@ -24,3 +26,7 @@ bundle-visualization.html
 *.njsproj
 *.sln
 *.sw?
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

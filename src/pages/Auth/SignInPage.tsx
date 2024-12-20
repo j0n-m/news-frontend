@@ -135,6 +135,7 @@ function SignInPage() {
                       <Input
                         className="mt-1"
                         name="emailInput"
+                        id="emailInput"
                         type="email"
                         placeholder="example@email.com"
                         autoComplete="email"
@@ -163,6 +164,7 @@ function SignInPage() {
                       <Input
                         className="mt-1"
                         name="passInput"
+                        id="passInput"
                         type="password"
                         autoComplete="current-password"
                         value={field.state.value}
