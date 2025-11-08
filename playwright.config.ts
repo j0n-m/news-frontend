@@ -13,6 +13,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./tests",
+  testIgnore: "auth.setup.ts",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -35,10 +36,17 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     { name: "setup", testMatch: /.*\.setup\.ts/ },
-    { name: "sign in", testMatch: /.*signin.test.ts/ },
-    { name: "home non-auth", testMatch: /.*home.test.ts/ },
+    {
+      name: "sign-in",
+      testMatch: /.*signin.test.ts/,
+    },
+    {
+      name: "home-non-auth",
+      testMatch: /.*home.test.ts/,
+    },
     {
       name: "chromium",
+      testIgnore: [/.*\.setup\.ts/, /.*signin.test.ts/, /.*home.test.ts/],
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
@@ -48,6 +56,7 @@ export default defineConfig({
 
     {
       name: "firefox",
+      testIgnore: [/.*\.setup\.ts/, /.*signin.test.ts/, /.*home.test.ts/],
       use: {
         ...devices["Desktop Firefox"],
         storageState: "playwright/.auth/user.json",
@@ -57,6 +66,7 @@ export default defineConfig({
 
     {
       name: "webkit",
+      testIgnore: [/.*\.setup\.ts/, /.*signin.test.ts/, /.*home.test.ts/],
       use: {
         ...devices["Desktop Safari"],
         storageState: "playwright/.auth/user.json",
