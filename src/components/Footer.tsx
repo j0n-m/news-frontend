@@ -19,7 +19,7 @@ function Footer() {
         </div>
         <div className="text-white mt-8 md:mt-0 flex items-center gap-4 md:items-start">
           <a
-            href="https://jon-m.xyz"
+            href={window.location.href}
             target="_blank"
             className="hover:scale-110 transition-all duration-300"
           >
